@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f3ecdf">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Electricity - Interactive Study Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Abril+Fatface&family=Bowlby+One&family=Special+Elite&family=Bungee&family=Titan+One&family=Ultra&family=Lilita+One&family=Bebas+Neue&family=Playfair+Display:wght@900&family=Rubik+Mono+One&family=Caveat+Brush&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#fbf7ee;--cream:#f3ecdf;--kraft:#b98f5e;--ink:#2b2622;--pencil:#3a332c;--night:#1b2a4a;--red:#d9483b;--mustard:#e0a73a;--teal:#2f7f7a;--ultra:#2f4fa8;--olive:#7c8a3c;--sage:#9dbb8e;--blush:#f1a9a0;
+--text:#2b2622;--muted:#6a5d4d;--accent:#2f7f7a;--pos:#d9483b;--neg:#2f4fa8;--ok:#7c8a3c;--warn:#e0a73a;--line:#d9ccb0;--canvas:#fbf7ee;--panel:#fbf7ee;--panel2:#f3ecdf;
+--shadow:0 9px 7px rgba(74,48,22,.30),0 2px 1.5px rgba(0,0,0,.20);
+--hand:"Patrick Hand","Segoe Print","Bradley Hand","Comic Sans MS",cursive;
+--brush:"Caveat Brush","Segoe Script","Bradley Hand","Brush Script MT",cursive;
+--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .35 0 0 0 0 .22 0 0 0 .10 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+*{box-sizing:border-box}
+html{background:#f3ecdf}
+body{margin:0;font:19px/1.4 var(--hand);color:var(--ink);min-height:100vh;overflow-x:hidden}
+#bd{position:fixed;inset:0;z-index:-2;overflow:hidden}
+#bd[data-bd=cream]{background-color:#f3ecdf;background-image:var(--grain),radial-gradient(ellipse at 50% 15%,#fbf7ee,#f3ecdf 78%)}
+#bd[data-bd=kraft]{background-color:#b98f5e;background-image:var(--grain),var(--grain),radial-gradient(circle at 20% 30%,rgba(74,48,22,.35) 1px,transparent 2px),radial-gradient(circle at 70% 60%,rgba(251,247,238,.45) 1px,transparent 2px);background-size:220px 220px,170px 170px,97px 113px,131px 89px}
+#bd[data-bd=sky]{background-color:#d6e6ee;background-image:var(--grain),radial-gradient(ellipse 150px 38px at 18% 14%,#fff 62%,transparent 64%),radial-gradient(ellipse 100px 34px at 24% 11%,#fff 62%,transparent 64%),radial-gradient(ellipse 170px 40px at 72% 28%,#fff 62%,transparent 64%),radial-gradient(ellipse 110px 34px at 78% 25%,#fff 62%,transparent 64%),radial-gradient(ellipse 160px 38px at 40% 62%,#fbf7ee 62%,transparent 64%),linear-gradient(#cfe3ee,#f3ecdf 85%)}
+#bd[data-bd=night]{background-color:#1b2a4a;background-image:var(--grain),radial-gradient(ellipse at 50% 0,#27406b,#1b2a4a 70%)}
+#stars{position:absolute;inset:0;display:none}
+#bd[data-bd=night] #stars{display:block}
+#stars i{position:absolute;border-radius:50%;background:#f3ecdf}
+#vig{position:fixed;inset:0;z-index:60;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(74,48,22,.22) 100%)}
+#doodles .sp{position:fixed;width:46px;height:46px;z-index:40;pointer-events:none;overflow:visible}
+.sp path,.dd path,.dd circle,.ul path,.chk path{fill:none;stroke:#3a332c;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.sp path{stroke-dasharray:1}
+
+header{position:sticky;top:0;z-index:20;filter:drop-shadow(0 6px 5px rgba(74,48,22,.28))}
+header .torn{position:absolute;left:0;right:0;top:0;bottom:-9px}
+header .tw{background:#fff}
+header .tc{background-color:#fbf7ee;background-image:var(--grain)}
+header .in{position:relative;display:flex;align-items:center;gap:22px;padding:12px 28px 20px;flex-wrap:wrap}
+header h1{margin:0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;flex:1;font-weight:400}
+#rTitle{display:inline-flex;align-items:center;gap:3px}
+.cap{font-family:var(--brush);font-size:30px;line-height:1;color:var(--ink);position:relative;padding-bottom:6px}
+.cap svg.ul{position:absolute;left:0;bottom:-6px;width:100%;height:12px}
+.stag{position:relative;background:var(--cream);border:2px solid #fff;padding:3px 16px 4px;box-shadow:var(--shadow);font-size:19px;rotate:-2deg}
+.stag::before{content:"";position:absolute;top:-10px;left:50%;width:44px;height:16px;translate:-50% 0;rotate:3deg;background:rgba(224,167,58,.78);clip-path:polygon(0 0,5% 25%,0 50%,5% 75%,0 100%,100% 100%,95% 75%,100% 50%,95% 25%,100% 0)}
+.sp0{width:.55em;display:inline-block}
+.tile{display:inline-block;min-width:1.05em;padding:.1em .12em .06em;text-align:center;line-height:1;font-size:27px;border:2px solid #fff;box-shadow:0 3px 2px rgba(74,48,22,.3),0 1px 1px rgba(0,0,0,.2);transform-origin:50% 100%;user-select:none}
+.tile.t0{background:#2b2622;color:#f3ecdf}
+.tile.t1{background:#f3ecdf;color:#d9483b}
+.tile.t2{background:#d9483b;color:#f3ecdf}
+.tile.t3{background:#2f4fa8;color:#e0a73a}
+.tile.t4{background:#e0a73a;color:#2b2622}
+.tile.t5{background:#f1a9a0;color:#8e2a22}
+.tile.t6{background-color:#d9483b;background-image:radial-gradient(circle,#f3ecdf 22%,transparent 24%);background-size:9px 9px;color:#fbf7ee;text-shadow:0 0 3px #d9483b,0 0 3px #d9483b}
+.tile.t7{background-color:#dbe6f2;background-image:linear-gradient(#9fb6d6 1px,transparent 1px),linear-gradient(90deg,#9fb6d6 1px,transparent 1px);background-size:8px 8px;color:#2f4fa8}
+.tile.t8{background:#2f7f7a;color:#f3ecdf}
+
+button,select{font:inherit;font-size:18px;color:var(--ink);background:var(--cream);border:2.5px solid var(--pencil);border-radius:255px 14px 225px 14px/14px 225px 14px 255px;padding:3px 14px 5px;cursor:pointer;box-shadow:0 3px 0 rgba(58,51,44,.35);transform-origin:50% 100%}
+select{border-radius:12px;padding:3px 8px}
+button:hover{background:#fff}
+button:active{translate:0 2px;box-shadow:none}
+button.primary{background:var(--red);color:var(--cream);border-color:var(--pencil)}
+#themeBtn{background:var(--mustard)}
+nav{display:flex;gap:14px;flex-wrap:wrap;padding:26px 28px 4px;max-width:1240px;margin:0 auto}
+nav button{position:relative;background-color:var(--paper);border:3px solid #fff;border-radius:3px;padding:3px 14px 4px;box-shadow:var(--shadow);font-size:20px;rotate:var(--r,0deg)}
+nav button::before{content:"";position:absolute;left:50%;top:-10px;width:34px;height:14px;translate:-50% 0;rotate:-4deg;background:var(--tp,rgba(241,169,160,.8));clip-path:polygon(0 0,8% 30%,0 60%,8% 100%,100% 100%,92% 60%,100% 30%,92% 0)}
+nav button:nth-child(3n+2){--tp:rgba(224,167,58,.78)}
+nav button:nth-child(3n){--tp:rgba(47,127,122,.62)}
+nav button.on{background-color:var(--red);color:var(--cream)}
+main{max-width:1240px;margin:0 auto;padding:18px 28px 70px}
+.panel{display:none}.panel.on{display:block}
+h2{font-family:var(--brush);font-weight:400;font-size:46px;line-height:1.05;margin:14px 0 0;color:var(--ink)}
+h2 .w{display:inline-block;white-space:nowrap}
+h2 .ch{display:inline-block;white-space:pre}
+svg.ul{display:block;width:min(380px,70%);height:14px;margin:2px 0 12px;overflow:visible}
+.ul path{stroke:#d9483b;stroke-dasharray:1}
+h3{margin:0 0 10px;font-family:var(--brush);font-weight:400;font-size:28px;line-height:1.1}
+.lead{color:var(--muted);margin:0 0 22px;max-width:880px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(350px,100%),1fr));gap:30px 26px;margin:6px 0 30px}
+.card{position:relative;background-color:var(--paper);background-image:var(--grain);border:8px solid #fff;border-radius:3px;padding:18px 18px 20px;box-shadow:var(--shadow);rotate:var(--r,0deg);transform-origin:50% 100%}
+.card:has(canvas),.card.wide{rotate:0deg}
+.card::before{content:"";position:absolute;top:-22px;left:50%;width:92px;height:26px;translate:-50% 0;rotate:var(--tr,-2deg);background:var(--tp,rgba(241,169,160,.8));clip-path:polygon(0 0,4% 18%,0 36%,4% 54%,0 72%,4% 100%,100% 100%,96% 82%,100% 64%,96% 46%,100% 28%,96% 10%,100% 0);pointer-events:none}
+.card:nth-child(3n+2){--tp:rgba(224,167,58,.78);--tr:2deg}
+.card:nth-child(3n){--tp:rgba(47,127,122,.6);--tr:-1deg}
+.wide{grid-column:1/-1}
+.ctl{display:grid;grid-template-columns:132px 1fr 112px;align-items:center;gap:10px;margin:6px 0;font-size:19px}
+.ctl output{display:inline-block;transform-origin:100% 50%;color:var(--ultra);text-align:right;font-size:18px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:5px;background:var(--pencil);opacity:.6;border-radius:5px}
+input[type=range]::-moz-range-track{height:5px;background:var(--pencil);opacity:.6;border-radius:5px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8.5px;border-radius:50%;background:var(--mustard);border:3px solid var(--ink);box-shadow:0 3px 2px rgba(74,48,22,.3)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--mustard);border:3px solid var(--ink);box-shadow:0 3px 2px rgba(74,48,22,.3)}
+input[type=radio]{accent-color:var(--red)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.row label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.read{background:var(--cream);border:2px dashed #8a7a64;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:19px}
+.read b{color:var(--red);font-weight:400}
+.read div{margin:2px 0}
+.eq{font-size:21px;color:var(--ink)}
+.tag{display:inline-block;padding:0 10px;border-radius:3px;border:2px solid #fff;font-size:16px;box-shadow:0 2px 2px rgba(74,48,22,.3);rotate:-2deg;vertical-align:1px}
+.tag.r{background:var(--red);color:var(--cream)}
+.tag.b{background:var(--ultra);color:var(--mustard)}
+.tag.g{background:var(--olive);color:var(--cream)}
+.tag.w{background:var(--mustard);color:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:18px}
+th,td{border-bottom:2px dashed var(--line);padding:4px 8px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:400}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:34px 24px;margin-top:8px}
+.chap{cursor:pointer;transition:translate .14s cubic-bezier(.3,2,.5,1)}
+.chap:hover{translate:0 -5px}
+.chap .n{margin-bottom:6px}
+.chap .n .tile{font-size:24px}
+.chap p{margin:4px 0 0;color:var(--muted);font-size:18px}
+.fs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(310px,100%),1fr));gap:34px 24px;margin-top:8px}
+.fs .card div{margin:5px 0}
+.fs h3 span{color:var(--red)}
+.q.ok{background-color:#eef0d8}
+.q.bad{background-color:#fbe6df}
+.q input[type=text]{width:150px;font:inherit;font-size:19px;padding:2px 6px;border:0;border-bottom:3px solid var(--pencil);background:transparent;color:var(--ink);outline:none}
+.q input[type=text]:focus{border-bottom-color:var(--red)}
+.q .fb{margin-top:8px}
+.chk{position:absolute;right:16px;top:12px;width:46px;height:46px;overflow:visible}
+.chk path{stroke:#d9483b;stroke-width:6;stroke-dasharray:1}
+.hint{color:var(--muted);font-size:17px}
+.qt{font-size:21px;line-height:1.35;padding-right:52px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:12px;margin:14px 0 6px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;font-size:21px;padding:8px 14px;min-height:54px;background:var(--cream)}
+.opt b{display:inline-grid;place-items:center;flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:var(--mustard);color:var(--ink);font-weight:400;font-size:19px;border:2px solid var(--pencil)}
+.opt.good{background:var(--olive);color:var(--cream)}
+.opt.nope{background:#f4c9c0;opacity:.85}
+.opt.nope span{text-decoration:line-through}
+.opt:disabled:not(.good):not(.nope){opacity:.55;cursor:default}
+.score{font-family:var(--brush);font-size:34px}
+
+#hero{position:fixed;right:16px;bottom:0;width:120px;z-index:30;pointer-events:none;transform:translateY(50%)}
+#hero svg{width:100%;height:auto;display:block;overflow:visible;transform-origin:50% 100%;filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 9px 7px rgba(74,48,22,.3))}
+#hop{transform-origin:50% 100%}
+#hero .dd path{stroke-dasharray:1;stroke-dashoffset:1}
+#say{position:absolute;right:88%;top:14%;background:var(--cream);border:2px solid #fff;padding:1px 12px 3px;box-shadow:var(--shadow);white-space:nowrap;font-size:20px;opacity:0;rotate:3deg;transform-origin:100% 100%}
+#say::before{content:"";position:absolute;right:-9px;top:-7px;width:26px;height:12px;rotate:12deg;background:rgba(241,169,160,.8)}
+.conf{position:fixed;width:9px;height:9px;z-index:70;pointer-events:none;box-shadow:0 2px 1px rgba(74,48,22,.3)}
+footer{margin-top:20px;position:relative;color:var(--cream);text-align:center;font-size:18px}
+footer svg{display:block;width:100%;height:120px;filter:drop-shadow(0 -2px 2px rgba(74,48,22,.28))}
+footer .fbar{background:#2f7f7a;padding:2px 20px 28px;margin-top:-1px}
+@media(max-width:900px){#hero{width:84px}h2{font-size:38px}.tile{font-size:22px}}
+.plotc{width:100%;aspect-ratio:16/7;height:auto;display:block;background-color:var(--canvas);background-image:var(--grain);border:0;outline:6px solid #fff;box-shadow:var(--shadow);margin:8px 0 14px;touch-action:pan-y}
+.hl{font-size:16px;color:var(--muted);margin:8px 0 0}
+.pill{position:relative}
+.pill input{position:absolute;opacity:0;pointer-events:none}
+.pill span{display:inline-block;padding:4px 14px 5px;border:2.5px solid var(--pencil);border-radius:255px 14px 225px 14px/14px 225px 14px 255px;background:var(--cream);box-shadow:0 3px 0 rgba(58,51,44,.35);cursor:pointer;transition:background .1s}
+.pill input:checked+span{background:var(--red);color:var(--cream)}
+.pill input:focus-visible+span{outline:3px solid var(--ultra)}
+.lab{position:relative;left:50%;width:100vw;margin:10px 0 40px -50vw;padding:12px 16px 14px;display:flex;flex-direction:column;gap:22px;height:calc(100vh - 100px);height:calc(100svh - 100px);min-height:540px;max-height:1200px}
+.stage{position:relative;flex:1 1 auto;min-height:260px;border:9px solid #fff;border-radius:3px;box-shadow:var(--shadow);background-color:var(--canvas);background-image:var(--grain);overflow:hidden}
+.stage::before,.stage::after{content:"";position:absolute;bottom:-4px;width:100px;height:26px;background:rgba(224,167,58,.7);z-index:2;pointer-events:none;clip-path:polygon(0 0,5% 25%,0 50%,5% 75%,0 100%,100% 100%,95% 75%,100% 50%,95% 25%,100% 0)}
+.stage::before{left:-26px;rotate:40deg;bottom:12px}
+.stage::after{right:-26px;rotate:-40deg;bottom:12px;background:rgba(47,127,122,.6)}
+.stage canvas.layer{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+.items{position:absolute;inset:0;pointer-events:none}
+.ctrls{position:relative;flex:0 1 auto;max-height:42%;display:flex;flex-direction:column;background-color:var(--paper);background-image:var(--grain);border:8px solid #fff;box-shadow:var(--shadow);border-radius:3px;min-height:0}
+.ctrls::before{content:"";position:absolute;top:-22px;left:50%;width:92px;height:26px;translate:-50% 0;rotate:-2deg;background:rgba(241,169,160,.8);clip-path:polygon(0 0,4% 18%,0 36%,4% 54%,0 72%,4% 100%,100% 100%,96% 82%,100% 64%,96% 46%,100% 28%,96% 10%,100% 0);pointer-events:none}
+.cin{overflow:auto;padding:8px 14px 14px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;min-height:0}
+.ctog{align-self:flex-start;margin:8px 0 0 12px;font-size:18px;padding:2px 14px 3px}
+.ctog::after{content:" \25BE"}
+.lab.min .cin{display:none}.lab.min .ctog::after{content:" \25B4"}
+.lab.min .ctrls{max-height:none}
+.stip{position:absolute;left:12px;top:12px;z-index:2;pointer-events:none;background:var(--cream);border:2px solid #fff;padding:1px 12px 3px;box-shadow:var(--shadow);font-size:18px;rotate:-2deg}
+.fsb{position:absolute;right:12px;top:12px;z-index:3;font-size:17px;padding:2px 12px 3px;background:var(--mustard)}
+.lab.infs{position:fixed;inset:0;left:0;width:auto;height:auto;max-height:none;margin:0;z-index:100;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background-color:#f3ecdf;background-image:var(--grain)}
+html.nofs,html.nofs body{overflow:hidden}
+@media (orientation:landscape) and (min-width:640px){.lab{flex-direction:row;min-height:360px}.ctrls{flex:0 0 clamp(290px,32vw,390px);max-height:none}.ctog{display:none}.lab.min .cin{display:block}}
+@media (max-height:520px){header{position:static}.lab{height:auto;min-height:420px}}
+.chg{position:absolute;width:56px;height:56px;translate:-50% -50%;pointer-events:auto;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;transition:scale .15s cubic-bezier(.3,2,.5,1)}
+.chg.fixed{pointer-events:none;cursor:default}
+.chg svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 9px 7px rgba(74,48,22,.30)) drop-shadow(0 2px 1.5px rgba(0,0,0,.20))}
+.chg .bd{fill:var(--c,#d9483b)}
+.chg .mo{display:none}
+.chg.dragging{scale:1.12;cursor:grabbing;z-index:4}
+.chg.dragging .sm{display:none}.chg.dragging .mo{display:block}
+.chg.inside svg>circle:first-child{fill:#9dbb8e}
+.chg .ql{position:absolute;left:50%;top:100%;translate:-50% 3px;white-space:nowrap;background:var(--cream);border:2px solid #fff;padding:0 8px;font-size:15px;line-height:1.25;box-shadow:0 2px 2px rgba(74,48,22,.3);pointer-events:none}
+.flg{position:absolute;touch-action:none;pointer-events:auto;cursor:grab;translate:-50% calc(-100% - 12px);min-width:46px;min-height:38px;padding:4px 14px 4px;background:var(--cream);border:2px solid #fff;box-shadow:var(--shadow);font-size:20px;text-align:center;line-height:1.2;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:scale .15s cubic-bezier(.3,2,.5,1)}
+.flg::after{content:"";position:absolute;left:50%;top:100%;translate:-50% 0;border:10px solid transparent;border-top:13px solid var(--cream)}
+.flg.down{translate:-50% 12px}
+.flg.down::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom:13px solid var(--cream)}
+.flg.pin{background:var(--mustard)}.flg.pin::after{border-top-color:var(--mustard)}
+.flg.dragging{scale:1.15;z-index:4;cursor:grabbing}
+@media (pointer:coarse){button,select,.pill span{min-height:46px}.pill span{display:inline-flex;align-items:center}nav button{min-height:44px}input[type=range]{height:40px}input[type=range]::-webkit-slider-thumb{width:30px;height:30px;margin-top:-12.5px}input[type=range]::-moz-range-thumb{width:24px;height:24px}.chap{min-height:44px}}
+@media (max-width:700px){
+  body{font-size:18px}
+  header .in{padding:8px 14px 18px;gap:10px}
+  header h1{gap:8px}.cap{display:none}
+  .tile{font-size:19px}.stag{font-size:16px;padding:1px 10px}
+  #themeBtn{font-size:16px;padding:2px 10px}
+  nav{flex-wrap:nowrap;overflow-x:auto;padding:20px 14px 8px;gap:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  nav::-webkit-scrollbar{display:none}
+  nav button{flex:0 0 auto;font-size:18px}
+  main{padding:8px 12px 60px}
+  .lab{padding:10px 8px 12px;gap:20px}
+  .card{padding:14px 12px 16px;border-width:6px}
+  .stage{border-width:7px}
+  .ctrls{border-width:6px}
+  .ctl{grid-template-columns:92px 1fr 74px;gap:6px;font-size:17px}
+  .ctl output{font-size:16px}
+  #hero,#doodles{display:none}
+  .lead{font-size:18px}
+  svg.ul{width:60%}
+}
+</style>
+</head>
+<body>
+<div id="bd" data-bd="cream"><div id="stars"></div></div>
+<div id="vig"></div>
+<div id="doodles">
+  <svg class="sp" style="left:14px;top:118px" viewBox="0 0 46 46"><path pathLength="1" d="M23 4 L23 42"/><path pathLength="1" d="M4 23 L42 23"/><path pathLength="1" d="M11 11 L35 35"/></svg>
+  <svg class="sp" style="right:16px;top:124px" viewBox="0 0 46 46"><path pathLength="1" d="M23 4 L23 42"/><path pathLength="1" d="M4 23 L42 23"/><path pathLength="1" d="M35 11 L11 35"/></svg>
+  <svg class="sp" style="left:22px;bottom:18px" viewBox="0 0 46 46"><path pathLength="1" d="M23 4 L23 42"/><path pathLength="1" d="M4 23 L42 23"/><path pathLength="1" d="M11 11 L35 35"/></svg>
+  <svg class="sp" style="right:190px;bottom:14px" viewBox="0 0 46 46"><path pathLength="1" d="M23 6 L23 40"/><path pathLength="1" d="M6 23 L40 23"/></svg>
+</div>
+<div id="hero"><div id="hop">
+  <svg id="heroSvg" viewBox="0 0 160 210" aria-hidden="true">
+    <g id="hBody" stroke="#3a332c" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <g id="tail" style="transform-origin:108px 178px">
+        <path d="M108 184 Q160 190 152 128 Q148 100 126 110 Q142 140 112 160 Z" fill="#df7f38"/>
+        <path d="M152 128 Q148 100 126 110 Q140 120 144 138 Q152 138 152 128Z" fill="#f3ecdf"/>
+      </g>
+      <rect x="56" y="176" width="22" height="28" rx="8" fill="#df7f38"/><rect x="82" y="176" width="22" height="28" rx="8" fill="#df7f38"/>
+      <path d="M57 193 H77 V202 Q67 206 57 202Z" fill="#3a332c"/><path d="M83 193 H103 V202 Q93 206 83 202Z" fill="#3a332c"/>
+      <path d="M46 120 Q40 178 52 188 L108 188 Q120 178 114 120 Q80 108 46 120Z" fill="#df7f38"/>
+      <ellipse cx="80" cy="158" rx="21" ry="26" fill="#f3ecdf" stroke-width="2"/>
+      <path d="M50 124 Q80 140 110 124 L108 138 Q80 152 52 138Z" fill="#2f7f7a"/>
+      <g id="armL" style="transform-origin:50px 126px"><rect x="42" y="124" width="16" height="44" rx="8" fill="#df7f38"/><circle cx="50" cy="171" r="8" fill="#3a332c"/></g>
+      <g id="armR" style="transform-origin:110px 126px"><rect x="102" y="124" width="16" height="44" rx="8" fill="#df7f38"/><circle cx="110" cy="171" r="8" fill="#3a332c"/></g>
+      <path d="M36 66 L38 12 L74 40Z" fill="#df7f38"/><path d="M124 66 L122 12 L86 40Z" fill="#df7f38"/>
+      <path d="M43 54 L44 26 L63 41Z" fill="#f1a9a0" stroke="none"/><path d="M117 54 L116 26 L97 41Z" fill="#f1a9a0" stroke="none"/>
+      <path d="M38 12 L50 22 L37 28Z" fill="#3a332c" stroke="none"/><path d="M122 12 L110 22 L123 28Z" fill="#3a332c" stroke="none"/>
+      <ellipse cx="80" cy="82" rx="50" ry="40" fill="#df7f38"/>
+      <path d="M31 88 Q52 120 80 122 Q108 120 129 88 Q104 94 80 100 Q56 94 31 88Z" fill="#f3ecdf" stroke="none"/>
+      <path d="M31 88 Q52 120 80 122 Q108 120 129 88" fill="none"/>
+      <ellipse cx="80" cy="99" rx="7" ry="5" fill="#2b2622" stroke="none"/>
+      <g id="eyes" fill="#2b2622" stroke="none" style="transform-origin:80px 82px"><circle cx="61" cy="82" r="4.6"/><circle cx="99" cy="82" r="4.6"/></g>
+      <circle cx="50" cy="98" r="8" fill="#f1a9a0" stroke="none" opacity=".8"/><circle cx="110" cy="98" r="8" fill="#f1a9a0" stroke="none" opacity=".8"/>
+      <path id="mS" d="M80 104 Q80 111 72 112 M80 104 Q80 111 88 112" fill="none"/>
+      <path id="mO" d="M71 106 Q80 126 89 106 Z" fill="#2b2622" style="display:none"/>
+    </g>
+    <g class="dd">
+      <path id="dEx" pathLength="1" d="M142 22 L138 58" style="stroke-width:5"/><path id="dExD" pathLength="1" d="M137 70 L137.5 70.5" style="stroke-width:7"/>
+      <path id="dQ" pathLength="1" d="M122 36 Q122 18 138 18 Q154 18 154 34 Q154 46 138 52 L138 60" style="stroke-width:5"/><path id="dQD" pathLength="1" d="M138 72 L138.5 72.5" style="stroke-width:7"/>
+    </g>
+  </svg>
+  <div id="say"></div>
+</div></div>
+<header>
+  <div class="torn tw" id="tornW"></div><div class="torn tc" id="tornC"></div>
+  <div class="in">
+    <h1 aria-label="Electricity: Interactive Study Lab"><span id="rTitle"></span><span class="cap" id="cap">Interactive Study Lab</span></h1>
+    <div class="stag">eng notes to hed</div>
+    <button id="themeBtn" title="Swap the paper backdrop">Backdrop: cream</button>
+  </div>
+</header>
+<nav id="nav"></nav>
+<main>
+
+<section class="panel" id="p-home">
+  <h2>Welcome</h2>
+  <p class="lead">Pick a chapter to play with its main results, or jump to the practice quiz. Every demo uses the book's own values (k = 9×10<sup>9</sup> N·m²/C², ε<sub>0</sub> = 8.85×10<sup>-12</sup> C²/N·m²), so the numbers match the worked examples. Try changing one slider at a time and watching what each formula predicts.</p>
+  <div class="cards" id="chapCards"></div>
+  <h2 style="margin-top:28px">Formula sheet</h2>
+  <div class="fs" id="formulas"></div>
+</section>
+
+<section class="panel" id="p-coulomb">
+  <h2>Chapter 1: Electric forces (Coulomb's law)</h2>
+  <p class="lead">Force between two point charges: <span class="eq">F = k q<sub>1</sub>q<sub>2</sub> / r²</span>. Like charges repel, unlike charges attract, and doubling the distance cuts the force to ¼. Drag the blue buddy along the ruler.</p>
+  <div class="lab" id="lab-coulomb">
+    <div class="stage" id="st-coulomb"><canvas class="layer"></canvas><div class="items"></div><div class="stip">drag the right buddy</div><button class="fsb" data-fs="lab-coulomb">full screen</button></div>
+    <div class="ctrls"><button class="ctog" type="button">controls</button><div class="cin">
+      <div id="c_ctl"></div>
+      <div class="row"><button id="c_ex">Example 1.3</button><button id="c_dbl">Double r</button><button id="c_sign">Flip q₂</button></div>
+      <div class="read" id="c_out"></div>
+    </div></div>
+  </div>
+  <div class="grid"><div class="card wide"><h3>Force against distance (inverse-square law)</h3><canvas class="plotc" id="cg"></canvas></div></div>
+</section>
+
+<section class="panel" id="p-field">
+  <h2>Chapter 2: The electric field</h2>
+  <p class="lead"><span class="eq">E = F/q<sub>0</sub> = kq/r²</span>, and fields add as vectors (superposition). Tap the paper to add charges, drag them around, and drag the yellow pin to read E and V anywhere. Field lines leave + charges and end on − charges.</p>
+  <div class="lab" id="lab-field">
+    <div class="stage" id="st-field"><canvas class="layer" style="cursor:crosshair"></canvas><div class="items"></div><div class="stip">tap to add a charge, drag to move</div><button class="fsb" data-fs="lab-field">full screen</button></div>
+    <div class="ctrls"><button class="ctog" type="button">controls</button><div class="cin">
+      <div class="hl">Tool</div>
+      <div class="row pills"><label class="pill"><input type="radio" name="ftool" value="pos" checked><span>+ charge</span></label><label class="pill"><input type="radio" name="ftool" value="neg"><span>− charge</span></label><label class="pill"><input type="radio" name="ftool" value="del"><span>remove</span></label></div>
+      <div class="hl">View</div>
+      <div class="row pills"><label class="pill"><input type="radio" name="fmode" value="lines" checked><span>field lines</span></label><label class="pill"><input type="radio" name="fmode" value="arrows"><span>arrows</span></label><label class="pill"><input type="radio" name="fmode" value="pot"><span>potential map</span></label></div>
+      <div id="f_ctl"></div>
+      <div class="row"><button id="f_dip">Dipole</button><button id="f_two">Two like</button><button id="f_quad">Quadrupole</button><button id="f_one">Single</button><button id="f_clr">Clear</button></div>
+      <div class="read" id="f_probe">Drag the yellow pin to probe the field.</div>
+    </div></div>
+  </div>
+</section>
+
+<section class="panel" id="p-gauss">
+  <h2>Chapter 3: Gauss's law</h2>
+  <p class="lead"><span class="eq">Φ = ∮ E·dA = Q<sub>in</sub> / ε<sub>0</sub></span>. Only the charge inside the Gaussian surface counts, wherever it sits. Drag the buddies across the dashed ring, or drag the R tag to resize it, and watch Φ change only when one crosses.</p>
+  <div class="lab" id="lab-gauss">
+    <div class="stage" id="st-gauss"><canvas class="layer"></canvas><div class="items"></div><div class="stip">drag buddies across the ring</div><button class="fsb" data-fs="lab-gauss">full screen</button></div>
+    <div class="ctrls"><button class="ctog" type="button">controls</button><div class="cin">
+      <div id="g_ctl"></div>
+      <div class="row"><button id="g_reset">Reset positions</button></div>
+      <div class="read" id="g_out"></div>
+    </div></div>
+  </div>
+  <div class="grid"><div class="card wide">
+    <h3>Using symmetry: E(r) for three classic shapes</h3>
+    <div class="row"><label>Shape <select id="g_geo"><option value="sphere">Charged conducting sphere</option><option value="line">Infinite line of charge</option><option value="sheet">Infinite sheet of charge</option></select></label></div>
+    <div id="g_ctl2"></div>
+    <canvas class="plotc" id="gp"></canvas>
+    <div class="read" id="g_out2"></div>
+  </div></div>
+</section>
+
+<section class="panel" id="p-pot">
+  <h2>Chapter 4: Electric potential</h2>
+  <p class="lead"><span class="eq">V<sub>B</sub> − V<sub>A</sub> = W/q<sub>0</sub> = −∫E·dr</span>. For a point charge <span class="eq">V = kq/r</span>; in a uniform field <span class="eq">ΔV = Ed</span>. Drag the A and B flags along the ruler and watch the work change.</p>
+  <div class="lab" id="lab-pot">
+    <div class="stage" id="st-pot"><canvas class="layer"></canvas><div class="items"></div><div class="stip">drag flags A and B</div><button class="fsb" data-fs="lab-pot">full screen</button></div>
+    <div class="ctrls"><button class="ctog" type="button">controls</button><div class="cin">
+      <div id="v_ctl"></div>
+      <div class="read" id="v_out"></div>
+      <p class="hint">W &gt; 0: an outside agent must push. W &lt; 0: the field does the work and the charge moves on its own.</p>
+    </div></div>
+  </div>
+  <div class="grid">
+    <div class="card wide"><h3>Potential against distance</h3><canvas class="plotc" id="vp"></canvas></div>
+    <div class="card"><h3>Uniform field between plates</h3>
+      <div id="u_ctl"></div>
+      <div class="row"><button id="u_ex">Example 4.5 (36 V, 15 cm, −5 µC)</button></div>
+      <canvas class="plotc" id="up" style="aspect-ratio:16/10"></canvas>
+      <div class="read" id="u_out"></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="p-cap">
+  <h2>Chapter 5: Capacitors</h2>
+  <p class="lead"><span class="eq">C = q/V</span>, parallel plates <span class="eq">C = ε<sub>0</sub>A/d</span>, energy <span class="eq">U = ½CV²</span>. A dielectric multiplies C by k. Drag the top plate to change d and the side tag to change A.</p>
+  <div class="lab" id="lab-cap">
+    <div class="stage" id="st-cap"><canvas class="layer"></canvas><div class="items"></div><div class="stip">drag the tags to change d and A</div><button class="fsb" data-fs="lab-cap">full screen</button></div>
+    <div class="ctrls"><button class="ctog" type="button">controls</button><div class="cin">
+      <div id="p_ctl"></div>
+      <div class="row"><label>Dielectric <select id="p_mat"></select></label></div>
+      <div class="row pills"><label class="pill"><input type="radio" name="pmode" value="iso" checked><span>disconnect, then insert</span></label><label class="pill"><input type="radio" name="pmode" value="batt"><span>battery stays on</span></label></div>
+      <div class="row"><button id="p_ex">Example 5.9</button></div>
+      <div class="read" id="p_warn"></div>
+    </div></div>
+  </div>
+  <div class="grid">
+    <div class="card wide"><div id="p_table"></div></div>
+    <div class="card wide"><h3>Four capacitors: series vs parallel</h3>
+      <div class="grid" style="margin:0"><div><div id="n_ctl"></div>
+      <div class="row pills"><label class="pill"><input type="radio" name="nmode" value="par" checked><span>parallel</span></label><label class="pill"><input type="radio" name="nmode" value="ser"><span>series</span></label><button id="n_ex">Examples 5.6/5.7</button></div>
+      <div id="n_out"></div></div>
+      <div><canvas class="plotc" id="nc" style="aspect-ratio:16/11"></canvas></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="p-cur">
+  <h2>Chapter 6: Current electricity</h2>
+  <p class="lead">Ohm's law <span class="eq">V = IR</span>, power <span class="eq">P = IV</span>, Kirchhoff's rules <span class="eq">ΣI = 0</span> and <span class="eq">Σε = ΣIR</span>, and RC circuits <span class="eq">q = Cε(1 − e<sup>−t/RC</sup>)</span>. Press play and watch the capacitor fill up.</p>
+  <div class="lab" id="lab-rc">
+    <div class="stage" id="st-rc"><canvas class="layer"></canvas><div class="items"></div><button class="fsb" data-fs="lab-rc">full screen</button></div>
+    <div class="ctrls"><button class="ctog" type="button">controls</button><div class="cin">
+      <div id="rc_ctl"></div>
+      <div class="row pills"><label class="pill"><input type="radio" name="rcmode" value="ch" checked><span>charging</span></label><label class="pill"><input type="radio" name="rcmode" value="dis"><span>discharging</span></label></div>
+      <div class="row"><button id="rc_play" class="primary">Play</button><button id="rc_ex">Example 6.12</button></div>
+      <div class="read" id="rc_out"></div>
+    </div></div>
+  </div>
+  <div class="grid">
+    <div class="card"><h3>Wire resistance and Ohm's law</h3>
+      <div class="row"><label>Material <select id="o_mat"></select></label></div>
+      <div id="o_ctl"></div>
+      <canvas class="plotc" id="ow" style="aspect-ratio:16/8"></canvas>
+      <div class="read" id="o_out"></div>
+      <p class="hint">Resistivity values are typical room-temperature figures (not taken from the notes).</p>
+    </div>
+    <div class="card"><h3>Resistors: series vs parallel</h3>
+      <div id="s_ctl"></div>
+      <canvas class="plotc" id="sc" style="aspect-ratio:16/10"></canvas>
+      <div class="read" id="s_out"></div>
+    </div>
+    <div class="card wide"><h3>Kirchhoff: Example 6.11 (Fig. 6.12)</h3>
+      <div class="grid" style="margin:0"><div><div id="k_ctl"></div><div class="row"><button id="k_ex">Reset to the book's values</button></div>
+      <div class="read" id="k_out"></div><div class="read" id="k_eq"></div>
+      <p class="hint">Junction: I₃ = I₁ + I₂. Loop I: ε₂ = R₁I₁ + R₃I₃. Loop II: ε₁ + ε₂ = R₂I₂ + R₃I₃. A negative current flows opposite to the assumed direction.</p></div>
+      <div><canvas class="plotc" id="kc" style="aspect-ratio:16/12"></canvas></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="p-ac">
+  <h2>Chapter 7: Alternating current</h2>
+  <p class="lead">Series R-L-C: <span class="eq">X<sub>L</sub> = ωL</span>, <span class="eq">X<sub>C</sub> = 1/ωC</span>, <span class="eq">Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²)</span>, <span class="eq">tan φ = (X<sub>L</sub> − X<sub>C</sub>)/R</span>, <span class="eq">I = V/Z</span>. Maximum current at <span class="eq">f<sub>0</sub> = 1/(2π√LC)</span>.</p>
+  <div class="lab" id="lab-ac">
+    <div class="stage" id="st-ac"><canvas class="layer"></canvas><div class="items"></div><button class="fsb" data-fs="lab-ac">full screen</button></div>
+    <div class="ctrls"><button class="ctog" type="button">controls</button><div class="cin">
+      <div id="a_ctl"></div>
+      <div class="row"><button id="a_ex">Example 7.4</button><button id="a_res">Set f = f₀</button></div>
+      <div class="read" id="a_out"></div>
+      <div class="read" id="a_phase"></div>
+    </div></div>
+  </div>
+  <div class="grid">
+    <div class="card wide"><h3>Current against frequency</h3><canvas class="plotc" id="ar"></canvas></div>
+    <div class="card wide"><h3>Transformer: V<sub>s</sub> = (N<sub>s</sub>/N<sub>p</sub>) V<sub>p</sub></h3>
+      <div class="grid" style="margin:0"><div><div id="t_ctl"></div><div class="read" id="t_out"></div></div>
+      <div><canvas class="plotc" id="tc" style="aspect-ratio:16/9"></canvas></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="p-quiz">
+  <h2>Practice quiz</h2>
+  <p class="lead">Ten quick questions. No formulas needed: each one tells you the rule in plain words, then you do the easy mental maths. Tap an answer.</p>
+  <div class="row"><span class="score" id="q_score"></span><button id="q_shuffle">Shuffle</button><button id="q_reset">Reset</button></div>
+  <div id="quiz"></div>
+</section>
+
+</main>
+<footer><svg id="hills" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true"></svg><div class="fbar">Standalone file. The paper-craft fonts load online when available; everything else works offline. Based on the English study notes (<code>electricity_notes_english.md</code>). Where the book has a misprint, the corrected value is used.</div></footer>
+
+<script>
+const K=9e9,E0=8.85e-12,QE=1.6e-19;
+const $=i=>document.getElementById(i);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+function sci(x,d=3){if(x===0)return'0';if(!isFinite(x))return'∞';const a=Math.abs(x);if(a>=1e4||a<1e-2){const[m,e]=x.toExponential(d-1).split('e');return`${m}×10<sup>${+e}</sup>`}return String(+x.toPrecision(d))}
+function eng(x,u,d=3){if(x===0)return'0 '+u;if(!isFinite(x))return'∞ '+u;const e=clamp(Math.floor(Math.log10(Math.abs(x))/3),-4,3);return(+(x/Math.pow(10,3*e)).toPrecision(d))+' '+['p','n','µ','m','','k','M','G'][e+4]+u}
+function rgb(c){const t=document.createElement('canvas').getContext('2d');t.fillStyle=c;const h=t.fillStyle;return[1,3,5].map(i=>parseInt(h.substr(i,2),16))}
+function ctl(id,label,min,max,step,v,unit,log){return`<label class="ctl"><span>${label}</span><input type="range" id="${id}" min="${min}" max="${max}" step="${log?'any':step}" value="${v}" data-unit="${unit||''}"${log?' data-log="1"':''}><output id="${id}_o"></output></label>`}
+const val=id=>{const e=$(id),v=+e.value;return e.dataset.log?Math.pow(10,v):v};
+function out(e){const o=$(e.id+'_o');if(!o)return;const v=val(e.id);o.innerHTML=(e.dataset.log?sci(v,3):String(+v.toPrecision(4)))+' '+(e.dataset.unit||'')}
+function setv(id,v){const e=$(id);e.value=e.dataset.log?Math.log10(v):v;out(e)}
+function arrow(g,x1,y1,x2,y2,col,w=2,head=9){g.strokeStyle=g.fillStyle=col;g.lineWidth=w;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();const a=Math.atan2(y2-y1,x2-x1);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-head*Math.cos(a-.4),y2-head*Math.sin(a-.4));g.lineTo(x2-head*Math.cos(a+.4),y2-head*Math.sin(a+.4));g.closePath();g.fill()}
+function cpos(cv,e){const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]}
+function axf(v){const a=Math.abs(v);return(a>=1e4||(a<1e-2&&a>0))?v.toExponential(0):String(+v.toPrecision(2))}
+/* ---------- paper-cutout motion engine ---------- */
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const A=(el,k,o)=>(el&&el.animate&&!RM)?el.animate(k,o):{finished:Promise.resolve(),cancel(){}};
+const POP='cubic-bezier(.3,1.9,.5,1)',SNAP='cubic-bezier(.3,.9,.4,1)';
+let _s=20241002;const rnd=()=>{_s|=0;_s=_s+0x6D2B79F5|0;let t=Math.imul(_s^_s>>>15,1|_s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+function pop(el,delay=0,rot=12,dur=520){el.style.transformOrigin='50% 100%';return A(el,[{transform:`scale(0) rotate(${rot}deg)`,opacity:0},{opacity:1,offset:.2},{transform:'scale(1) rotate(0deg)',opacity:1}],{duration:dur,delay,easing:POP,fill:'backwards'})}
+function pops(list,gap=65){[...list].forEach((e,i)=>pop(e,Math.min(i,8)*gap,e.matches('.stage,.ctrls')?2:(i%2?-8:8)))}
+function idle(el,amp=1.5){A(el,[{transform:`rotate(${-amp}deg) translateY(0)`},{transform:`rotate(${amp}deg) translateY(-${(amp*1.4).toFixed(1)}px)`}],{duration:2400+rnd()*1600,direction:'alternate',iterations:150,easing:'ease-in-out',delay:-rnd()*2000})}
+function hop(el){A(el,[{transform:'scale(1.12,.84)'},{transform:'translateY(-7px) scale(.94,1.12)'},{transform:'translateY(0) scale(1.05,.95)'},{transform:'none'}],{duration:340,easing:SNAP})}
+function bump(el){A(el,[{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:220,easing:POP})}
+const TF=["'Alfa Slab One',Impact,'Arial Black',sans-serif","'Abril Fatface',Georgia,serif","'Bowlby One',Impact,sans-serif","'Special Elite','Courier New',monospace","Bungee,Impact,sans-serif","'Titan One','Arial Black',sans-serif","Ultra,Georgia,serif","'Lilita One',Impact,sans-serif","'Bebas Neue',Impact,sans-serif","'Playfair Display',Georgia,serif;font-weight:900","'Rubik Mono One','Arial Black',sans-serif"];
+function tiles(text){let h='';[...text].forEach(c=>{if(c===' '){h+='<span class="sp0"></span>';return}const k=Math.floor(rnd()*9),f=TF[Math.floor(rnd()*TF.length)],r=((rnd()-.5)*12).toFixed(1),j=((rnd()-.5)*6).toFixed(1),ch=rnd()<.4?c.toUpperCase():c;h+=`<span class="tile t${k}" style="font-family:${f};rotate:${r}deg;translate:0 ${j}px">${ch}</span>`});return h}
+function slap(host){host.querySelectorAll('.tile').forEach((t,i)=>{A(t,[{transform:'scale(2.3) rotate(9deg)',opacity:0},{opacity:1,offset:.25},{transform:'scale(1) rotate(0deg)',opacity:1}],{duration:280,delay:i*45,easing:POP,fill:'backwards'}).finished.then(()=>idle(t,1.6)).catch(()=>{})})}
+function confetti(x,y,n=14){const cols=['#d9483b','#e0a73a','#2f7f7a','#2f4fa8','#f1a9a0','#9dbb8e'];for(let i=0;i<n;i++){const d=document.createElement('i');d.className='conf';d.style.cssText=`left:${x}px;top:${y}px;background:${cols[i%6]}`;document.body.appendChild(d);const dx=(rnd()-.5)*170,dy=-40-rnd()*70,rot=(rnd()-.5)*720;A(d,[{transform:'translate(0,0) rotate(0deg) scale(0)',opacity:1},{transform:`translate(${dx*.6}px,${dy}px) rotate(${rot*.5}deg) scale(1)`,opacity:1,offset:.35},{transform:`translate(${dx}px,${dy+140}px) rotate(${rot}deg) scale(1)`,opacity:0}],{duration:950,easing:'cubic-bezier(.3,.7,.5,1)'}).finished.then(()=>d.remove()).catch(()=>d.remove())}}
+function drawOn(path,delay=0,dur=380){return A(path,[{strokeDashoffset:1},{strokeDashoffset:0}],{duration:dur,delay,easing:SNAP,fill:'backwards'})}
+const ULS='<svg class="ul" viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 6 Q60 1 120 7 T298 4"/><path pathLength="1" d="M5 11.5 Q80 8 150 12 T292 9"/></svg>';
+function wrapHeading(h){if(h._w)return;const txt=h.textContent;h.setAttribute('aria-label',txt);h.textContent='';txt.split(' ').forEach((w,wi,arr)=>{const ws=document.createElement('span');ws.className='w';ws.setAttribute('aria-hidden','true');[...w].forEach(c=>{const s=document.createElement('span');s.className='ch';s.textContent=c;ws.appendChild(s)});h.appendChild(ws);if(wi<arr.length-1)h.appendChild(document.createTextNode(' '))});h.insertAdjacentHTML('afterend',ULS);h._w=1}
+function reveal(p){
+  const h=p.querySelector('h2');let n=0;
+  if(h){wrapHeading(h);const cs=h.querySelectorAll('.ch');n=cs.length;cs.forEach((s,i)=>A(s,[{opacity:0},{opacity:1}],{duration:1,delay:i*26,easing:'steps(1,end)',fill:'backwards'}));h.nextElementSibling.querySelectorAll('path').forEach((q,i)=>drawOn(q,n*26+i*230,420))}
+  const l=p.querySelector('.lead');if(l)A(l,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:420,delay:n*26,easing:POP,fill:'backwards'});
+  pops(p.querySelectorAll('.card,.stage,.ctrls'),70);requestAnimationFrame(()=>{if(R[curTab()])R[curTab()]()})}
+/* hero: small kid in a red beanie and yellow raincoat, peeks up from behind the bottom edge */
+let hT,armD={armL:0,armR:0};
+function arm(id,deg,dur=380){const e=$(id);if(e._a)e._a.cancel();e._a=A(e,[{transform:`rotate(${armD[id]}deg)`},{transform:`rotate(${deg}deg)`}],{duration:dur,easing:POP,fill:'forwards'});armD[id]=deg}
+function waveArm(){arm('armR',-150);let k=0;const t=setInterval(()=>{arm('armR',-150+(k%2?20:-20),170);if(++k>9){clearInterval(t);arm('armR',-8)}},180)}
+function cheerPose(){arm('armL',150);arm('armR',-150);$('mS').style.display='none';$('mO').style.display='';A($('hop'),[{transform:'scale(1,1)'},{transform:'scale(1.1,.86)'},{transform:'translateY(-22px) scale(.94,1.1)'},{transform:'scale(1.06,.94)'},{transform:'none'}],{duration:600,iterations:2,easing:SNAP});setTimeout(()=>{arm('armL',8);arm('armR',-8);$('mO').style.display='none';$('mS').style.display=''},1300)}
+function shiverPose(){let k=0;const b=$('hBody'),t=setInterval(()=>{b.style.transform=`translate(${((rnd()-.5)*7).toFixed(1)}px,${((rnd()-.5)*4).toFixed(1)}px) rotate(${((rnd()-.5)*5).toFixed(1)}deg)`;b.style.transformOrigin='80px 190px';if(++k>9){clearInterval(t);b.style.transform=''}},110)}
+function doodle(ids){ids.forEach((id,i)=>{const p=$(id);p.style.strokeDashoffset=0;drawOn(p,i*160,320);setTimeout(()=>{p.style.strokeDashoffset=1},1900)})}
+function heroShow(txt,pose,dd){clearTimeout(hT);const h=$('hero'),s=$('say');s.textContent=txt;A(h,[{transform:'translateY(50%)'},{transform:'translateY(0)'}],{duration:480,easing:POP,fill:'forwards'});A(s,[{transform:'scale(0) rotate(-12deg)',opacity:0},{opacity:1,offset:.2},{transform:'scale(1) rotate(0deg)',opacity:1}],{duration:420,delay:200,easing:POP,fill:'both'});if(pose)pose();if(dd)doodle(dd);
+  hT=setTimeout(()=>{A(s,[{opacity:1},{opacity:0}],{duration:200,fill:'forwards'});A(h,[{transform:'translateY(0)'},{transform:'translateY(50%)'}],{duration:320,easing:'cubic-bezier(.6,-.4,.9,.5)',fill:'forwards'})},2600)}
+let blinks=0;const blinkT=setInterval(()=>{A($('eyes'),[{transform:'scaleY(1)'},{transform:'scaleY(.1)'},{transform:'scaleY(1)'}],{duration:170,easing:'steps(3,end)'});if(++blinks>70)clearInterval(blinkT)},3100);
+/* backdrops, torn paper, stars, hills */
+const BD=['cream','kraft','sky','night'];let bdi=0;
+function setBD(i){bdi=i;$('bd').dataset.bd=BD[i];$('themeBtn').textContent='Backdrop: '+BD[i]}
+function tornPath(min,max,step=1.5){const p=['0 0','100% 0'];for(let x=100;x>=0;x-=step)p.push(`${x.toFixed(1)}% calc(100% - ${(min+rnd()*(max-min)).toFixed(1)}px)`);return`polygon(${p.join(',')})`}
+function buildPaper(){
+  $('tornW').style.clipPath=tornPath(0,8);$('tornC').style.clipPath=tornPath(4,12);
+  let h='';for(let i=0;i<90;i++){const z=1.5+rnd()*3.5;h+=`<i style="left:${(rnd()*100).toFixed(1)}%;top:${(rnd()*100).toFixed(1)}%;width:${z.toFixed(1)}px;height:${z.toFixed(1)}px"></i>`}
+  $('stars').innerHTML=h;$('stars').querySelectorAll('i').forEach((e,i)=>{if(i%7===0)A(e,[{opacity:1},{opacity:.25}],{duration:900,direction:'alternate',iterations:30,easing:'steps(2,end)',delay:-rnd()*900})});
+  const ragged=(y0,amp,fill)=>{let d=`M0,120 L0,${y0}`;for(let x=0;x<=1200;x+=20)d+=` L${x},${(y0+Math.sin(x/110+y0)*amp+(rnd()-.5)*7).toFixed(1)}`;return`<path d="${d} L1200,120 Z" fill="${fill}" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`};
+  $('hills').innerHTML=ragged(52,14,'#9dbb8e')+ragged(72,12,'#7c8a3c')+ragged(94,8,'#2f7f7a')}
+const SAY={home:'hi!',coulomb:'forces!',field:'fields!',gauss:'flux!',pot:'volts!',cap:'charge!',cur:'flow!',ac:'wiggle!',quiz:'quiz time'};
+
+/* ---------- tabs ---------- */
+const TABS=[['home','Overview'],['coulomb','1 · Forces'],['field','2 · Field'],['gauss','3 · Gauss'],['pot','4 · Potential'],['cap','5 · Capacitors'],['cur','6 · Current'],['ac','7 · AC'],['quiz','Quiz']];
+const R={};
+$('nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('');
+let sw=0;
+function show(t,instant){
+  const tok=++sw,nx=$('p-'+t);document.querySelectorAll('.panel').forEach(p=>{if(p._an){p._an.cancel();p._an=null}});const cur=document.querySelector('.panel.on');
+  const go=()=>{if(tok!==sw)return;document.querySelectorAll('.panel').forEach(p=>{if(p._an){p._an.cancel();p._an=null}p.classList.toggle('on',p===nx)});document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));if(R[t])R[t]();try{history.replaceState(null,'','#'+t)}catch(e){}window.scrollTo(0,0);reveal(nx);const nb=document.querySelector('#nav button[data-t="'+t+'"]');if(nb&&!instant){pop(nb,0,6,420);const r=nb.getBoundingClientRect();confetti(r.left+r.width/2,r.top+10,10)}if(!instant)heroShow(SAY[t]||'',waveArm)};
+  if(instant||!cur||cur===nx){go();return}
+  cur._an=A(cur,[{transform:'scaleX(1)'},{transform:'scaleX(0)'}],{duration:110,easing:'cubic-bezier(.6,0,.9,.4)',fill:'forwards'});cur._an.finished.then(go).catch(go)}
+$('nav').onclick=e=>{if(e.target.dataset.t)show(e.target.dataset.t)};
+const curTab=()=>document.querySelector('.panel.on').id.slice(2);
+document.addEventListener('input',e=>{const t=e.target;if(t.type==='range'){out(t);bump($(t.id+'_o'))}const p=t.closest('.panel');if(p&&R[p.id.slice(2)])R[p.id.slice(2)]()});
+$('themeBtn').onclick=()=>{setBD((bdi+1)%4);heroShow('new paper!')};
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(b)hop(b)});
+
+/* ---------- home ---------- */
+const CH=[['coulomb','Chapter 1','Electric forces','Charge quantisation, conservation of charge, Coulomb\'s law and superposition.'],
+['field','Chapter 2','The electric field','E = F/q0, field lines, dipoles, a charge moving in a field.'],
+['gauss','Chapter 3','Gauss\'s law','Flux through closed surfaces and field of symmetric charge shapes.'],
+['pot','Chapter 4','Electric potential','Potential difference, V = kq/r, equipotentials, the electron-volt.'],
+['cap','Chapter 5','Capacitors','C = q/V, series and parallel, energy, dielectrics.'],
+['cur','Chapter 6','Current electricity','Ohm, Kirchhoff, power and RC circuits.'],
+['ac','Chapter 7','Alternating current','Reactance, impedance, resonance and transformers.'],
+['quiz','Practice','Quiz','Ten quick multiple-choice questions, no formulas needed.']];
+$('chapCards').innerHTML=CH.map(c=>`<div class="card chap" data-t="${c[0]}"><div class="n">${tiles(c[1].replace('Chapter ','').replace('Practice','?'))}</div><div class="hint" style="margin-top:-2px">${c[1]}</div><h3 style="margin:2px 0">${c[2]}</h3><p>${c[3]}</p></div>`).join('');
+$('chapCards').onclick=e=>{const c=e.target.closest('.chap');if(c)show(c.dataset.t)};
+const FS=[['1','Forces',['q = N e,  e = 1.6×10<sup>-19</sup> C','F = k q<sub>1</sub>q<sub>2</sub>/r²,  k = 1/4πε<sub>0</sub> ≈ 9×10<sup>9</sup>','F<sub>net</sub> = ΣF<sub>i</sub> (vector sum)']],
+['2','Field',['E = F/q<sub>0</sub>  (N/C)','E = kq/r²  (point charge)','E = λ/(2πε<sub>0</sub>r)  (infinite line)','a = (q/m) E']],
+['3','Gauss',['Φ = ∮E·dA = Q<sub>in</sub>/ε<sub>0</sub>','Point charge: E = kQ/r²','Line: E = λ/(2πε<sub>0</sub>x)']],
+['4','Potential',['V<sub>B</sub> − V<sub>A</sub> = W/q<sub>0</sub> = −∫E·dr','V = kq/r,  ΣV (scalar sum)','Uniform field: ΔV = Ed','1 eV = 1.6×10<sup>-19</sup> J']],
+['5','Capacitors',['C = q/V,  C = ε<sub>0</sub>A/d,  C = 4πε<sub>0</sub>R','Cylinder: C = 2πε<sub>0</sub>l / ln(b/a)','Parallel: C = ΣC<sub>i</sub>;  series: 1/C = Σ1/C<sub>i</sub>','U = ½CV² = q²/2C;  u = ½ε<sub>0</sub>E²','Dielectric: k = C/C<sub>0</sub>,  C = kε<sub>0</sub>A/d']],
+['6','Current',['I = dq/dt,  V = IR,  P = IV = I²R','R = ρL/A','Junction: ΣI = 0;  loop: Σε = ΣIR','Charge: q = Cε(1 − e<sup>−t/RC</sup>),  I = I<sub>0</sub>e<sup>−t/RC</sup>','Discharge: q = q<sub>0</sub>e<sup>−t/RC</sup>']],
+['7','AC',['I<sub>rms</sub> = I<sub>0</sub>/√2','X<sub>L</sub> = ωL,  X<sub>C</sub> = 1/ωC','Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²),  V = IZ','tan φ = (X<sub>L</sub> − X<sub>C</sub>)/R','f<sub>0</sub> = 1/(2π√LC)','V<sub>s</sub>/V<sub>p</sub> = N<sub>s</sub>/N<sub>p</sub>']]];
+$('formulas').innerHTML=FS.map(f=>`<div class="card"><h3><span>Ch ${f[0]}</span> ${f[1]}</h3>${f[2].map(x=>`<div class="eq">${x}</div>`).join('')}</div>`).join('');
+
+/* ===== canvas toolkit (paper-cutout drawing) ===== */
+const FONT='"Patrick Hand","Segoe Print","Bradley Hand","Comic Sans MS",cursive',PEN='#3a332c',lerp=(a,b,t)=>a+(b-a)*t;
+function seeded(seed){let s=seed|0;return()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function fit(cv){const dpr=Math.min(window.devicePixelRatio||1,2),w=cv.clientWidth||300,h=cv.clientHeight||150,pw=Math.round(w*dpr),ph=Math.round(h*dpr);if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph}const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);return{g,W:w,H:h}}
+function tagBox(g,x,y,text,o={}){const fs=o.size||17;g.save();g.font=`${fs}px ${FONT}`;const w=g.measureText(text).width+18,h=fs+11,a=o.a||'c',tx=x-(a==='c'?w/2:a==='r'?w:0),ty=y-h/2;g.translate(x,y);g.rotate(o.rot||0);g.translate(-x,-y);g.shadowColor='rgba(74,48,22,.30)';g.shadowBlur=5;g.shadowOffsetY=4;g.fillStyle='#fff';g.fillRect(tx-2,ty-2,w+4,h+4);g.shadowColor='transparent';g.fillStyle=o.bg||'#f3ecdf';g.fillRect(tx,ty,w,h);g.fillStyle=o.fg||'#2b2622';g.textBaseline='middle';g.textAlign='left';g.fillText(text,tx+9,ty+h/2+1);g.restore();return{w,h}}
+function cutArrow(g,x1,y1,x2,y2,col,wd=12){const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);if(L<4)return;const ux=dx/L,uy=dy/L,nx=-uy,ny=ux,hl=Math.min(L*.55,wd*1.9),hw=wd*1.2,bx=x2-ux*hl,by=y2-uy*hl;
+  const P=[[x1+nx*wd/2,y1+ny*wd/2],[bx+nx*wd/2,by+ny*wd/2],[bx+nx*hw,by+ny*hw],[x2,y2],[bx-nx*hw,by-ny*hw],[bx-nx*wd/2,by-ny*wd/2],[x1-nx*wd/2,y1-ny*wd/2]];
+  const path=()=>{g.beginPath();P.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath()};
+  g.save();g.shadowColor='rgba(74,48,22,.30)';g.shadowBlur=6;g.shadowOffsetY=5;g.lineJoin='round';g.lineWidth=7;g.strokeStyle='#fff';path();g.stroke();g.shadowColor='transparent';g.fillStyle=col;path();g.fill();g.lineWidth=2;g.strokeStyle=PEN;g.globalAlpha=.55;path();g.stroke();g.restore()}
+function sparkle(g,x,y,s){g.save();g.strokeStyle=PEN;g.lineWidth=3;g.lineCap='round';g.beginPath();g.moveTo(x,y-s);g.lineTo(x,y+s);g.moveTo(x-s,y);g.lineTo(x+s,y);g.moveTo(x-s*.55,y-s*.55);g.lineTo(x+s*.55,y+s*.55);g.stroke();g.restore()}
+function wash(g,W,H,seed){const r=seeded(seed),cols=['157,187,142','241,169,160','47,127,122','224,167,58','47,79,168','241,169,160'];for(let i=0;i<7;i++){g.fillStyle=`rgba(${cols[i%6]},${(.06+r()*.05).toFixed(3)})`;g.beginPath();g.ellipse(r()*W,r()*H,W*(.12+r()*.2),H*(.1+r()*.2),r()*3,0,7);g.fill()}sparkle(g,W-30,H-30,11);sparkle(g,28,H-28,9)}
+function pencil(g,pts,w=2.5,col=PEN){g.save();g.strokeStyle=col;g.lineWidth=w;g.lineCap='round';g.lineJoin='round';g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.restore()}
+function dot(g,x,y,r,col){g.save();g.shadowColor='rgba(74,48,22,.3)';g.shadowBlur=4;g.shadowOffsetY=3;g.fillStyle='#fff';g.beginPath();g.arc(x,y,r+3,0,7);g.fill();g.shadowColor='transparent';g.fillStyle=col;g.beginPath();g.arc(x,y,r,0,7);g.fill();g.restore()}
+function zig(g,x1,y,x2,n=6,amp=9){const pts=[[x1,y]],w=(x2-x1)/(n*2);for(let i=0;i<n*2;i++)pts.push([x1+w*(i+.5),y+(i%2?amp:-amp)]);pts.push([x2,y]);pencil(g,pts,3)}
+function plot(g,B,o){
+  const sm=B.w<460,m={l:sm?46:60,r:14,t:14,b:sm?36:42},fs=sm?14:16,x0=B.x+m.l,x1=B.x+B.w-m.r,y0=B.y+B.h-m.b,y1=B.y+m.t;
+  const X=x=>x0+(x-o.xmin)/(o.xmax-o.xmin)*(x1-x0),Y=y=>y0-(y-o.ymin)/(o.ymax-o.ymin)*(y0-y1);
+  g.save();g.font=`${fs}px ${FONT}`;g.lineWidth=1;g.textBaseline='alphabetic';
+  for(let i=0;i<=5;i++){const x=o.xmin+(o.xmax-o.xmin)*i/5,y=o.ymin+(o.ymax-o.ymin)*i/5;g.strokeStyle='#d9ccb0';g.setLineDash([5,5]);g.beginPath();g.moveTo(X(x),y1);g.lineTo(X(x),y0);g.moveTo(x0,Y(y));g.lineTo(x1,Y(y));g.stroke();g.setLineDash([]);
+    g.fillStyle='#6a5d4d';g.textAlign='center';g.fillText(axf(x),X(x),y0+fs+4);g.textAlign='right';g.fillText(axf(y),x0-7,Y(y)+5)}
+  g.fillStyle='#6a5d4d';g.textAlign='center';g.fillText(o.xl||'',(x0+x1)/2,B.y+B.h-5);g.save();g.translate(B.x+13,(y0+y1)/2);g.rotate(-Math.PI/2);g.fillText(o.yl||'',0,0);g.restore();
+  if(o.ymin<0&&o.ymax>0)pencil(g,[[x0,Y(0)],[x1,Y(0)]],1.5);
+  pencil(g,[[x0,y1],[x0,y0],[x1,y0]],2.5);
+  g.save();g.beginPath();g.rect(x0,y1,x1-x0,y0-y1);g.clip();
+  (o.vlines||[]).forEach(v=>{g.strokeStyle=v.color;g.lineWidth=2.5;g.setLineDash([7,6]);g.beginPath();g.moveTo(X(v.x),y1);g.lineTo(X(v.x),y0);g.stroke();g.setLineDash([])});
+  (o.series||[]).forEach(s=>{const tr=()=>{g.beginPath();let st=false;for(let i=0;i<=240;i++){const x=o.xmin+(o.xmax-o.xmin)*i/240,y=s.fn(x);if(!isFinite(y)){st=false;continue}st?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));st=true}};g.lineCap='round';g.lineJoin='round';g.strokeStyle='#fff';g.lineWidth=8;tr();g.stroke();g.strokeStyle=s.color;g.lineWidth=3.5;tr();g.stroke()});
+  g.restore();
+  (o.marks||[]).forEach(p=>{const px=clamp(X(p.x),x0,x1),py=clamp(Y(p.y),y1,y0);dot(g,px,py,6,p.color);if(p.label)tagBox(g,px+(px>x1-90?-12:12),py-16,p.label,{a:px>x1-90?'r':'l',size:fs-1})});
+  let ly=y1+14;(o.series||[]).forEach(s=>{if(!s.label)return;tagBox(g,x1-6,ly,s.label,{a:'r',size:fs-1,fg:s.color});ly+=fs+14});
+  g.restore()}
+function plotCv(cv,o){const f=fit(cv);f.g.clearRect(0,0,f.W,f.H);plot(f.g,{x:0,y:0,w:f.W,h:f.H},o)}
+
+/* ===== stage (full-screen diagram) + draggable cutout items ===== */
+const ST={},UIs=()=>clamp(Math.min(innerWidth,innerHeight*1.5)/720,.85,1.2);
+function mkStage(id,pxf,draw){const el=$(id),cv=el.querySelector('canvas.layer'),items=el.querySelector('.items'),s={el,cv,items,draw,list:[],pend:false};
+  s.ev=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+  s.render=()=>{const f=fit(cv);s.g=f.g;s.W=f.W;s.H=f.H;s.cx=f.W/2;s.cy=f.H/2;s.px=pxf?pxf(f.W,f.H):10;f.g.clearRect(0,0,f.W,f.H);wash(f.g,f.W,f.H,id.length*7);draw(s);s.list.forEach(it=>{const p=it.place(s);it.el.style.left=p[0]+'px';it.el.style.top=p[1]+'px'})};
+  s.queue=()=>{if(!s.pend){s.pend=true;requestAnimationFrame(()=>{s.pend=false;s.render()})}};
+  ST[id]=s;return s}
+function mkItem(S,el,sp){const it=Object.assign({el,S},sp);S.items.appendChild(el);S.list.push(it);
+  el.addEventListener('pointerdown',e=>{if(it.down&&it.down(e)===false)return;if(!it.move)return;e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(_){}it.drag=true;el.classList.add('dragging');const t=S.el.querySelector('.stip');if(t)t.remove()});
+  el.addEventListener('pointermove',e=>{if(!it.drag)return;const p=S.ev(e);it.move(p[0],p[1],S);S.queue()});
+  const end=()=>{if(!it.drag)return;it.drag=false;el.classList.remove('dragging');if(it.up)it.up();S.queue()};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);return it}
+function rmItem(S,it){it.el.remove();const i=S.list.indexOf(it);if(i>=0)S.list.splice(i,1)}
+const CHG_SVG=(()=>{const r=seeded(11),n=18,pts=[],mid=(a,b)=>`${((a[0]+b[0])/2).toFixed(1)} ${((a[1]+b[1])/2).toFixed(1)}`;for(let i=0;i<n;i++){const a=i/n*Math.PI*2,rr=41+(r()-.5)*2.4;pts.push([50+rr*Math.cos(a),50+rr*Math.sin(a)])}
+  let d=`M${mid(pts[n-1],pts[0])}`;for(let i=0;i<n;i++)d+=` Q${pts[i][0].toFixed(1)} ${pts[i][1].toFixed(1)} ${mid(pts[i],pts[(i+1)%n])}`;d+='Z';
+  return`<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#fff"/><path class="bd" d="${d}" stroke="#3a332c" stroke-width="3" stroke-linejoin="round"/><ellipse cx="37" cy="35" rx="17" ry="9" transform="rotate(-28 37 35)" fill="#fff" opacity=".22"/><g fill="#2b2622"><circle cx="38" cy="47" r="3.8"/><circle cx="62" cy="47" r="3.8"/></g><circle cx="29" cy="58" r="6.5" fill="#f1a9a0" opacity=".75"/><circle cx="71" cy="58" r="6.5" fill="#f1a9a0" opacity=".75"/><path class="sm" d="M40 61 Q50 71 60 61" fill="none" stroke="#2b2622" stroke-width="3" stroke-linecap="round"/><ellipse class="mo" cx="50" cy="65" rx="6" ry="7" fill="#2b2622"/><g class="bg"><circle cx="82" cy="18" r="13" fill="#f3ecdf" stroke="#3a332c" stroke-width="2.5"/><path class="sg" d="" stroke="#2b2622" stroke-width="3.5" stroke-linecap="round" fill="none"/></g></svg>`})();
+function setCharge(el,q){el.style.setProperty('--c',q>0?'#d9483b':q<0?'#2f4fa8':'#9dbb8e');const d=clamp((38+5*Math.abs(q))*UIs(),46,104);el.style.width=el.style.height=d+'px';const sg=el.querySelector('.sg'),bg=el.querySelector('.bg');bg.style.display=q===0?'none':'';sg.setAttribute('d',q>0?'M76 18H88M82 12V24':'M76 18H88');el.querySelector('.ql').textContent=(q>0?'+':'')+(+q.toFixed(1))+' µC'}
+function chargeEl(q,fixed){const el=document.createElement('div');el.className='chg'+(fixed?' fixed':'');el.innerHTML=CHG_SVG+'<span class="ql"></span>';setCharge(el,q);return el}
+function flagEl(txt,cls){const el=document.createElement('div');el.className='flg '+(cls||'');el.innerHTML=`<span>${txt}</span>`;return el}
+const radius=el=>(el.offsetWidth||50)/2;
+
+/* ---------- Ch1 Coulomb ---------- */
+$('c_ctl').innerHTML=ctl('c_q1','Charge q₁',-10,10,.1,2.5,'µC')+ctl('c_q2','Charge q₂',-10,10,.1,.7,'µC')+ctl('c_r','Distance r',1,50,.5,12,'cm');
+const cGeo=s=>{const m=s.W*.12;return{x1:m,pc:(s.W-2*m)/50,y:s.H*.42}};
+const SC=mkStage('st-coulomb',null,s=>{
+  const g=s.g,q1=val('c_q1'),q2=val('c_q2'),r=val('c_r'),F=K*Math.abs(q1*q2)*1e-12/Math.pow(r/100,2),p=q1*q2,{x1,pc,y}=cGeo(s),x2=x1+r*pc,ys=y+Math.min(s.H*.3,150);
+  const fs=s.W<520?13:15;g.save();g.fillStyle='#fff';g.shadowColor='rgba(74,48,22,.3)';g.shadowBlur=6;g.shadowOffsetY=5;g.fillRect(x1-18,ys-16,50*pc+36,32);g.restore();g.fillStyle='#f3ecdf';g.fillRect(x1-14,ys-12,50*pc+28,24);
+  g.font=`${fs}px ${FONT}`;g.textAlign='center';g.fillStyle=PEN;for(let c=0;c<=50;c++){const x=x1+c*pc,L=c%10===0?14:c%5===0?9:5;pencil(g,[[x,ys-12],[x,ys-12+L]],c%10===0?2.5:1.5);if(c%10===0)g.fillText(c,x,ys+8)}
+  g.textAlign='left';g.fillText('cm',x1+50*pc+14,ys+5);
+  pencil(g,[[x1,ys-26],[x1,ys-34],[x2,ys-34],[x2,ys-26]],2.5,'#d9483b');tagBox(g,(x1+x2)/2,ys-34,'r = '+r+' cm',{size:fs+1,bg:'#fbf7ee'});
+  const it1=s.list[0],it2=s.list[1];setCharge(it1.el,q1);setCharge(it2.el,q2);const r1=radius(it1.el)+6,r2=radius(it2.el)+6;
+  if(p!==0){const L=clamp(34+30*(Math.log10(F)+3),34,Math.min(170,s.W*.16)),d=p>0?1:-1;
+    if(d>0){cutArrow(g,x1-r1,y,x1-r1-L,y,'#e0a73a',14);cutArrow(g,x2+r2,y,x2+r2+L,y,'#e0a73a',14)}
+    else{cutArrow(g,x1+r1,y,x1+r1+L,y,'#e0a73a',14);cutArrow(g,x2-r2,y,x2-r2-L,y,'#e0a73a',14)}}
+  tagBox(g,(x1+x2)/2,y-Math.max(r1,r2)-34,'F = '+(F>=1e4||F<1e-2?F.toExponential(2):+F.toPrecision(3))+' N',{size:fs+4,bg:'#e0a73a'});
+  tagBox(g,(x1+x2)/2,y+Math.max(r1,r2)+34,p>0?'push apart':p<0?'pull together':'no force',{size:fs+1,bg:p>0?'#d9483b':p<0?'#2f4fa8':'#9dbb8e',fg:p<0?'#e0a73a':'#f3ecdf'});
+  s.geo={x1,pc,y}});
+(()=>{const e1=chargeEl(2.5,true),e2=chargeEl(.7);
+  mkItem(SC,e1,{place:s=>{const o=cGeo(s);return[o.x1,o.y]},down:()=>false});
+  mkItem(SC,e2,{place:s=>{const o=cGeo(s);return[o.x1+val('c_r')*o.pc,o.y]},move:(px,py,s)=>{const o=cGeo(s);setv('c_r',clamp(Math.round((px-o.x1)/o.pc*2)/2,1,50));R.coulomb()}});
+  idle(e1,2);idle(e2,2)})();
+R.coulomb=()=>{SC.render();const q1=val('c_q1'),q2=val('c_q2'),r=val('c_r'),rm=r/100,F=K*Math.abs(q1*q2)*1e-12/(rm*rm),p=q1*q2;
+  $('c_out').innerHTML=`<div>F = (9×10<sup>9</sup>)(${q1}×10<sup>-6</sup>)(${q2}×10<sup>-6</sup>) / (${rm})²</div><div><b>|F| = ${eng(F,'N')}</b> ${p>0?'<span class="tag r">repulsive</span>':p<0?'<span class="tag b">attractive</span>':'<span class="tag w">no force</span>'}</div><div>At 2r the force is ${eng(F/4,'N')} (¼); at r/2 it is ${eng(F*4,'N')} (×4)</div>`;
+  plotCv($('cg'),{xmin:0,xmax:50,ymin:0,ymax:Math.max(F*1.5,K*Math.abs(q1*q2)*1e-12/Math.pow(.04,2)*.5,1e-9),xl:'distance r (cm)',yl:'force (N)',series:[{fn:x=>K*Math.abs(q1*q2)*1e-12/Math.pow(x/100,2),color:'#2f7f7a'}],marks:[{x:r,y:F,color:'#d9483b',label:eng(F,'N')}]})};
+$('c_ex').onclick=()=>{setv('c_q1',2.5);setv('c_q2',.7);setv('c_r',12);R.coulomb()};
+$('c_dbl').onclick=()=>{setv('c_r',Math.min(50,val('c_r')*2));R.coulomb()};
+$('c_sign').onclick=()=>{setv('c_q2',-val('c_q2'));R.coulomb()};
+
+/* ---------- Ch2 Field + Ch4 map ---------- */
+$('f_ctl').innerHTML=ctl('f_mag','New charge size',1,10,.5,3,'µC');
+const ftool=()=>document.querySelector('input[name=ftool]:checked').value;
+let FC=[],FP=[],hm=null,PROBE={x:0,y:-13};
+const fieldAt=(x,y,s)=>{let ex=0,ey=0,v=0;for(const c of FP){const dx=(x-c.x)/s.px/100,dy=(y-c.y)/s.px/100,r=Math.hypot(dx,dy);if(r<1e-4)continue;const e=K*c.q*1e-6/(r*r);ex+=e*dx/r;ey+=e*dy/r;v+=K*c.q*1e-6/r}return{ex,ey,v}};
+function trace(s,c,dir){const n=clamp(Math.round(Math.abs(c.q)*4),8,26),rad=c.r+2,lines=[];
+  for(let k=0;k<n;k++){const a=2*Math.PI*(k+.5)/n;let x=c.x+rad*Math.cos(a),y=c.y+rad*Math.sin(a);const pts=[[x,y]];
+    for(let i=0;i<1400;i++){const f=fieldAt(x,y,s),m=Math.hypot(f.ex,f.ey);if(!m)break;x+=dir*f.ex/m*3.2;y+=dir*f.ey/m*3.2;pts.push([x,y]);if(x<-5||x>s.W+5||y<-5||y>s.H+5)break;if(FP.some(o=>o!==c&&Math.hypot(o.x-x,o.y-y)<o.r))break}
+    lines.push(pts)}
+  return lines}
+function drawHeat(s){const cell=Math.max(2,Math.round(Math.sqrt(s.W*s.H/90000))),w=Math.ceil(s.W/cell),h=Math.ceil(s.H/cell),V=new Float32Array(w*h),L=new Int32Array(w*h),step=2e4;
+  if(!hm){hm=document.createElement('canvas')}hm.width=w;hm.height=h;
+  for(let j=0;j<h;j++)for(let i=0;i<w;i++){let v=0;const px=(i+.5)*cell,py=(j+.5)*cell;for(const c of FP){const r=Math.hypot(px-c.x,py-c.y)/s.px/100;v+=K*c.q*1e-6/Math.max(r,2e-3)}v=clamp(v,-1e7,1e7);V[j*w+i]=v;L[j*w+i]=Math.floor(v/step)}
+  const g=hm.getContext('2d'),im=g.createImageData(w,h),bg=[251,247,238],tx=[43,38,34],P=[217,72,59],N=[47,79,168];
+  for(let j=0;j<h;j++)for(let i=0;i<w;i++){const k=j*w+i,t=Math.tanh(V[k]/1.5e5),c=t>0?P:N,a=Math.abs(t);let col=[0,1,2].map(n=>bg[n]+(c[n]-bg[n])*a*.8);
+    if((i>0&&L[k]!==L[k-1])||(j>0&&L[k]!==L[k-w]))col=col.map((x,n)=>x*.45+tx[n]*.55);
+    im.data[k*4]=col[0];im.data[k*4+1]=col[1];im.data[k*4+2]=col[2];im.data[k*4+3]=255}
+  g.putImageData(im,0,0);s.g.imageSmoothingEnabled=true;s.g.drawImage(hm,0,0,w*cell,h*cell)}
+const SF=mkStage('st-field',(W,H)=>Math.max(3,Math.min(W/70,H/45)),s=>{
+  const mode=document.querySelector('input[name=fmode]:checked').value,g=s.g;
+  FP=FC.map(c=>({x:s.cx+c.x*s.px,y:s.cy+c.y*s.px,q:c.q,r:radius(c.it.el)}));
+  if(mode==='pot'&&FP.length)drawHeat(s);
+  else if(mode==='arrows'){const gap=s.W<520?34:44;for(let x=gap/2;x<s.W;x+=gap)for(let y=gap/2;y<s.H;y+=gap){const f=fieldAt(x,y,s),m=Math.hypot(f.ex,f.ey);if(!m||FP.some(c=>Math.hypot(c.x-x,c.y-y)<c.r))continue;const a=clamp(.3+.22*(Math.log10(m)-4),.25,1),L=gap*.34;g.globalAlpha=a;arrow(g,x-f.ex/m*L,y-f.ey/m*L,x+f.ex/m*L,y+f.ey/m*L,'#2f7f7a',2.5,8)}g.globalAlpha=1}
+  else{const pos=FP.filter(c=>c.q>0),src=pos.length?pos:FP.filter(c=>c.q<0),dir=pos.length?1:-1;g.strokeStyle='#2f7f7a';g.fillStyle='#2f7f7a';g.lineWidth=2.4;g.lineCap='round';g.lineJoin='round';
+    src.forEach(c=>trace(s,c,dir).forEach(pts=>{g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();
+      if(pts.length>10){const i=Math.floor(pts.length/2),a=pts[i],b=pts[i+1]||a,an=Math.atan2(b[1]-a[1],b[0]-a[0])+(dir<0?Math.PI:0);g.beginPath();g.moveTo(a[0]+8*Math.cos(an),a[1]+8*Math.sin(an));g.lineTo(a[0]+8*Math.cos(an+2.5),a[1]+8*Math.sin(an+2.5));g.lineTo(a[0]+8*Math.cos(an-2.5),a[1]+8*Math.sin(an-2.5));g.fill()}}))}
+  const px=s.cx+PROBE.x*s.px,py=s.cy+PROBE.y*s.px,f=fieldAt(px,py,s),m=Math.hypot(f.ex,f.ey);
+  if(m)cutArrow(g,px,py,px+f.ex/m*Math.min(70,s.W*.12),py+f.ey/m*Math.min(70,s.W*.12),'#e0a73a',11);
+  $('f_probe').innerHTML=`At the pin: <b>E = ${eng(m,'N/C')}</b>, direction ${m?(Math.atan2(-f.ey,f.ex)*180/Math.PI).toFixed(1)+'° from +x':'n/a'}, <b>V = ${eng(f.v,'V')}</b><div class="hint">${FC.length} charge${FC.length===1?'':'s'}. V is the scalar sum, E the vector sum.</div>`});
+function newCharge(x,y,q,anim){const c={x,y,q},el=chargeEl(q),it=mkItem(SF,el,{place:s=>[s.cx+c.x*s.px,s.cy+c.y*s.px],move:(px,py,s)=>{c.x=(clamp(px,16,s.W-16)-s.cx)/s.px;c.y=(clamp(py,16,s.H-16)-s.cy)/s.px},down:()=>{if(ftool()==='del'){const r=el.getBoundingClientRect();confetti(r.left+r.width/2,r.top+r.height/2,10);killCharge(c);SF.queue();return false}}});c.it=it;FC.push(c);idle(el,2);if(anim)pop(el,0,10,420);return c}
+function killCharge(c){rmItem(SF,c.it);FC.splice(FC.indexOf(c),1)}
+function preset(a){FC.slice().forEach(killCharge);a.forEach(([x,y,q])=>newCharge(x,y,q,true));SF.queue()}
+(()=>{const el=flagEl('P','pin');mkItem(SF,el,{place:s=>[s.cx+PROBE.x*s.px,s.cy+PROBE.y*s.px],move:(px,py,s)=>{PROBE.x=(clamp(px,10,s.W-10)-s.cx)/s.px;PROBE.y=(clamp(py,10,s.H-10)-s.cy)/s.px}});})();
+(()=>{const cv=SF.cv;let t=null;cv.addEventListener('pointerdown',e=>{t={x:e.clientX,y:e.clientY,t:performance.now()}});cv.addEventListener('pointercancel',()=>{t=null});
+  cv.addEventListener('pointerup',e=>{if(!t)return;const d=Math.hypot(e.clientX-t.x,e.clientY-t.y),dt=performance.now()-t.t;t=null;if(d>9||dt>700)return;const tool=ftool();if(tool==='del'||FC.length>=12)return;const p=SF.ev(e);const st=SF.el.querySelector('.stip');if(st)st.remove();newCharge((p[0]-SF.cx)/SF.px,(p[1]-SF.cy)/SF.px,(tool==='pos'?1:-1)*val('f_mag'),true);SF.queue()})})();
+R.field=()=>SF.render();
+$('f_dip').onclick=()=>preset([[-8,0,5],[8,0,-5]]);
+$('f_two').onclick=()=>preset([[-8,0,5],[8,0,5]]);
+$('f_quad').onclick=()=>preset([[-8,-7,4],[8,-7,-4],[8,7,4],[-8,7,-4]]);
+$('f_one').onclick=()=>preset([[0,0,5]]);
+$('f_clr').onclick=()=>preset([]);
+newCharge(-8,0,5);newCharge(8,0,-5);
+
+/* ---------- Ch3 Gauss ---------- */
+const GN=[[3,-2,3],[-8,4,-1],[15,6,2],[-22,-9,4],[-14,15,-3]];
+$('g_ctl').innerHTML=ctl('g_R','Surface radius',2,30,.5,12,'cm')+GN.map((c,i)=>ctl('g_q'+i,'Charge '+(i+1),-5,5,.5,c[2],'µC')).join('');
+const GI=[];
+const SG=mkStage('st-gauss',(W,H)=>Math.max(3,Math.min(W/70,H/45)),s=>{
+  const g=s.g,Rp=val('g_R')*s.px,cx=s.cx,cy=s.cy,qs=GN.map((_,i)=>val('g_q'+i));
+  const P=GI.map((it,i)=>({x:s.cx+it.x*s.px,y:s.cy+it.y*s.px,q:qs[i]}));
+  const fG=(px,py)=>{let ex=0,ey=0;P.forEach(c=>{const dx=(px-c.x)/s.px/100,dy=(py-c.y)/s.px/100,r=Math.hypot(dx,dy);if(r<1e-4)return;const e=K*c.q*1e-6/(r*r);ex+=e*dx/r;ey+=e*dy/r});return[ex,ey]};
+  g.fillStyle='rgba(47,127,122,.10)';g.beginPath();g.arc(cx,cy,Rp,0,7);g.fill();
+  for(let k=0;k<36;k++){const a=2*Math.PI*k/36,nx=Math.cos(a),ny=Math.sin(a),px=cx+Rp*nx,py=cy+Rp*ny,f=fG(px,py),en=f[0]*nx+f[1]*ny,L=8+24*Math.tanh(Math.abs(en)/2e6);
+    if(Math.abs(en)<1e3)continue;en>=0?arrow(g,px,py,px+nx*L,py+ny*L,'#d9483b',3,8):arrow(g,px+nx*L,py+ny*L,px,py,'#2f4fa8',3,8)}
+  g.save();g.strokeStyle='#fff';g.lineWidth=8;g.beginPath();g.arc(cx,cy,Rp,0,7);g.stroke();g.strokeStyle='#2f7f7a';g.lineWidth=3.5;g.setLineDash([10,8]);g.beginPath();g.arc(cx,cy,Rp,0,7);g.stroke();g.restore();
+  let Q=0,nin=0;GI.forEach((it,i)=>{setCharge(it.el,qs[i]);const inside=Math.hypot(P[i].x-cx,P[i].y-cy)<Rp;it.el.classList.toggle('inside',inside);if(inside){Q+=qs[i];nin++}});
+  tagBox(g,cx,cy-Rp-18<16?cy+Rp+18:cy-Rp-18,'Gaussian surface',{size:s.W<520?14:16,bg:'#2f7f7a',fg:'#f3ecdf'});
+  const Phi=Q*1e-6/E0;
+  $('g_out').innerHTML=`<div>Charges inside (green rings): ${nin}</div><div>Q<sub>in</sub> = ${Q.toFixed(1)} µC</div><div><b>Φ = Q<sub>in</sub>/ε<sub>0</sub> = ${sci(Phi,3)} N·m²/C</b> ${Q>0?'<span class="tag r">net outward</span>':Q<0?'<span class="tag b">net inward</span>':'<span class="tag g">zero net flux</span>'}</div><div class="hint">Red arrows: field out of the surface. Blue: into it. Outside charges push as much flux in as out.</div>`});
+GN.forEach((c,i)=>{const it={x:c[0],y:c[1]},el=chargeEl(c[2]);Object.assign(it,mkItem(SG,el,{place:s=>[s.cx+it.x*s.px,s.cy+it.y*s.px],move:(px,py,s)=>{it.x=(clamp(px,16,s.W-16)-s.cx)/s.px;it.y=(clamp(py,16,s.H-16)-s.cy)/s.px}}));it.sx=c[0];it.sy=c[1];GI.push(it);idle(el,2)});
+(()=>{const el=flagEl('R','down');mkItem(SG,el,{place:s=>[s.cx+val('g_R')*s.px,s.cy],move:(px,py,s)=>{setv('g_R',clamp(Math.round(Math.hypot(px-s.cx,py-s.cy)/s.px*2)/2,2,30));R.gauss()}})})();
+let gGeo='';
+R.gauss=()=>{SG.render();
+  const geo=$('g_geo').value;
+  if(gGeo!==geo){gGeo=geo;const d={sphere:['Charge Q',1,10,.5,5,'µC'],line:['Line density λ',1,20,.5,5,'nC/m'],sheet:['Surface density σ',1,20,.5,5,'nC/m²']}[geo];$('g_ctl2').innerHTML=ctl('g_p',d[0],d[1],d[2],d[3],d[4],d[5])+(geo==='sphere'?ctl('g_a','Sphere radius R',2,20,.5,10,'cm'):'')+ctl('g_r','Probe distance r',1,50,.5,15,'cm');document.querySelectorAll('#g_ctl2 input').forEach(out)}
+  const p=val('g_p'),a=$('g_a')?val('g_a')/100:0,r=val('g_r')/100;let fn,txt;
+  if(geo==='sphere'){const Qc=p*1e-6;fn=x=>x/100<a?0:K*Qc/Math.pow(x/100,2);txt=r<a?'Inside a conductor E = 0 (the Gaussian sphere encloses no charge)':'Outside: E = Q/(4πε₀r²), the same as a point charge'}
+  else if(geo==='line'){const l=p*1e-9;fn=x=>l/(2*Math.PI*E0*(x/100));txt='E = λ/(2πε₀r), falls as 1/r (Gaussian cylinder, flux only through the curved side)'}
+  else{const s=p*1e-9;fn=x=>s/(2*E0);txt='E = σ/(2ε₀), the same at every distance'}
+  const Er=fn(r*100),ymax=geo==='sphere'?fn(a*100)*1.2:geo==='sheet'?fn(1)*1.5:fn(5);
+  plotCv($('gp'),{xmin:0,xmax:50,ymin:0,ymax:ymax||1,xl:'distance r (cm)',yl:'E (N/C)',series:[{fn,color:'#2f7f7a'}],marks:[{x:r*100,y:Er,color:'#d9483b',label:eng(Er,'N/C')}],vlines:geo==='sphere'?[{x:a*100,color:'#e0a73a'}]:[]});
+  $('g_out2').innerHTML=`<div>At r = ${(r*100).toFixed(1)} cm: <b>E = ${eng(Er,'N/C')}</b></div><div class="hint">${txt}</div>`};
+$('g_geo').oninput=()=>R.gauss();
+$('g_reset').onclick=()=>{GI.forEach(it=>{it.x=it.sx;it.y=it.sy});setv('g_R',12);R.gauss()};
+
+/* ---------- Ch4 Potential ---------- */
+$('v_ctl').innerHTML=ctl('v_q','Source charge q',-20,20,.5,18,'µC')+ctl('v_t','Test charge q₀',-10,10,.5,1,'µC')+ctl('v_a','Point A distance',1,100,1,35,'cm')+ctl('v_b','Point B distance',1,100,1,42,'cm');
+$('u_ctl').innerHTML=ctl('u_v','Potential difference V',1,500,1,36,'V')+ctl('u_d','Plate separation d',1,50,.5,15,'cm')+ctl('u_q','Moved charge q₀',-10,10,.5,-5,'µC');
+const pGeo=s=>{const x0=s.W*.13;return{x0,pp:(s.W-x0-s.W*.07)/100,y:s.H*.5}};
+let potIt=null;
+const SP=mkStage('st-pot',null,s=>{
+  const g=s.g,q=val('v_q')*1e-6,t=val('v_t')*1e-6,ra=val('v_a'),rb=val('v_b'),{x0,pp,y}=pGeo(s),Va=K*q/(ra/100),Vb=K*q/(rb/100),W=t*(Vb-Va),fs=s.W<520?13:15;
+  [5,10,20,30,50,75,100].forEach((r,i)=>{g.save();g.strokeStyle=q<0?'rgba(47,79,168,.55)':'rgba(217,72,59,.55)';g.lineWidth=2.5;g.setLineDash([9,7]);g.beginPath();g.arc(x0,y,r*pp,0,7);g.stroke();g.restore()});
+  g.save();g.fillStyle=q<0?'rgba(47,79,168,.07)':'rgba(217,72,59,.07)';g.beginPath();g.arc(x0,y,Math.max(ra,rb)*pp,0,7);g.fill();g.restore();
+  pencil(g,[[x0,y],[s.W-10,y]],2.5);g.font=`${fs}px ${FONT}`;g.fillStyle=PEN;g.textAlign='center';
+  for(let r=0;r<=100;r+=10){const x=x0+r*pp;pencil(g,[[x,y-6],[x,y+6]],2);if(r>0&&(s.W>520||r%20===0))g.fillText(r,x,y+24)}g.textAlign='left';g.fillText('cm',s.W-34,y+24);
+  [10,30,50,100].forEach(r=>{if(Math.abs(r-ra)<4||Math.abs(r-rb)<4)return;tagBox(g,x0+r*pp*.7071,y-r*pp*.7071-2<14?y-14:y-r*pp*.7071,'V='+eng(K*q/(r/100),'V',2),{size:fs-1,bg:'#fbf7ee',rot:-.04})});
+  const yy=y+Math.min(s.H*.28,120);cutArrow(g,x0+ra*pp,yy,x0+rb*pp,yy,W>0?'#e0a73a':W<0?'#7c8a3c':'#9dbb8e',13);
+  tagBox(g,x0+(ra+rb)/2*pp,yy+34,'W = '+eng(W,'J'),{size:fs+3,bg:W>0?'#e0a73a':W<0?'#7c8a3c':'#9dbb8e',fg:W>0?'#2b2622':'#f3ecdf'});
+  tagBox(g,x0+ra*pp,y-s.H*.2,'V_A = '+eng(Va,'V',3),{size:fs,bg:'#fbf7ee'});tagBox(g,x0+rb*pp,y+s.H*.2+(Math.abs(ra-rb)*pp<110?34:0),'V_B = '+eng(Vb,'V',3),{size:fs,bg:'#fbf7ee'});
+  setCharge(potIt.el,val('v_q'))});
+(()=>{potIt=mkItem(SP,chargeEl(18,true),{place:s=>{const o=pGeo(s);return[o.x0,o.y]},down:()=>false});idle(potIt.el,2);
+  [['A','',s=>val('v_a'),'v_a'],['B','down',s=>val('v_b'),'v_b']].forEach(([l,c,gv,id])=>{const el=flagEl(l,c);mkItem(SP,el,{place:s=>{const o=pGeo(s);return[o.x0+val(id)*o.pp,o.y]},move:(px,py,s)=>{const o=pGeo(s);setv(id,clamp(Math.round((px-o.x0)/o.pp),1,100));R.pot()}})})})();
+R.pot=()=>{SP.render();
+  const q=val('v_q')*1e-6,ra=val('v_a')/100,rb=val('v_b')/100,t=val('v_t')*1e-6,Va=K*q/ra,Vb=K*q/rb,dV=Vb-Va,W=t*dV;
+  $('v_out').innerHTML=`<div>V<sub>A</sub> = kq/r<sub>A</sub> = <b>${eng(Va,'V')}</b></div><div>V<sub>B</sub> = <b>${eng(Vb,'V')}</b></div><div>V<sub>B</sub> − V<sub>A</sub> = <b>${eng(dV,'V')}</b></div><div>W<sub>A→B</sub> = q₀(V<sub>B</sub> − V<sub>A</sub>) = <b>${eng(W,'J')}</b> ${W>0?'<span class="tag w">outside agent does work</span>':W<0?'<span class="tag g">field does the work</span>':'<span class="tag b">no work</span>'}</div>`;
+  const vm=Math.abs(K*q/.05)||1;
+  plotCv($('vp'),{xmin:0,xmax:100,ymin:q<0?-vm:0,ymax:q<0?0:vm,xl:'distance r (cm)',yl:'V (volts)',series:[{fn:x=>x<1?NaN:K*q/(x/100),color:'#2f7f7a',label:'V = kq/r'}],marks:[{x:ra*100,y:Va,color:'#7c8a3c',label:'A'},{x:rb*100,y:Vb,color:'#e0a73a',label:'B'}]});
+  const V=val('u_v'),d=val('u_d')/100,q0=val('u_q')*1e-6,E=V/d,Wu=q0*V;
+  $('u_out').innerHTML=`<div>E = V/d = <b>${eng(E,'V/m')}</b></div><div>Moving q₀ from the negative to the positive plate: W = q₀V = <b>${eng(Wu,'J')}</b> ${Wu<0?'<span class="tag g">moves by itself</span>':'<span class="tag w">needs a push</span>'}</div><div>An electron or proton released across ${V} V gains <b>${V} eV</b> = ${sci(V*QE,3)} J</div>`;
+  const f=fit($('up')),g=f.g,W2=f.W,H2=f.H;g.clearRect(0,0,W2,H2);const px0=W2*.15,px1=W2*.85,ty=H2*.2,by=H2*.8;
+  [[ty,'#d9483b','+'],[by,'#2f4fa8','−']].forEach(([y,c,sg])=>{g.save();g.shadowColor='rgba(74,48,22,.3)';g.shadowBlur=5;g.shadowOffsetY=4;g.fillStyle='#fff';g.fillRect(px0-3,y-9,px1-px0+6,18);g.restore();g.fillStyle=c;g.fillRect(px0,y-6,px1-px0,12);g.fillStyle='#fff';g.font=`bold 16px ${FONT}`;g.textAlign='center';for(let x=px0+14;x<px1;x+=26)g.fillText(sg,x,y+5)});
+  for(let x=px0+30;x<px1-10;x+=(px1-px0)/7)arrow(g,x,ty+12,x,by-12,'#2f7f7a',2.5,9);
+  const cy=Wu<0?(q0<0?by-34:ty+34):by-34;
+  tagBox(g,(px0+px1)/2,(ty+by)/2,'E = '+eng(E,'V/m'),{size:16,bg:'#fbf7ee'});tagBox(g,px1-4,by+26,'V = '+V+' V',{a:'r',size:15,bg:'#e0a73a'});
+  pencil(g,[[px0-18,ty],[px0-18,by]],2.5,'#d9483b');tagBox(g,px0-18,(ty+by)/2,'d = '+(d*100)+' cm',{size:14,rot:-.05,bg:'#f3ecdf'})};
+$('u_ex').onclick=()=>{setv('u_v',36);setv('u_d',15);setv('u_q',-5);R.pot()};
+
+/* ---------- Ch5 Capacitors ---------- */
+$('p_ctl').innerHTML=ctl('p_A','Plate area A',10,1000,10,400,'cm²')+ctl('p_d','Separation d',.5,10,.1,5,'mm')+ctl('p_V','Voltage V',0,3000,10,2500,'V');
+const MATS=[['Vacuum',1,1e99],['Air',1.00054,.8],['Glass',4.5,13],['Mica',5.6,160],['Water',80.4,3],['Example 5.9 dielectric (k = 1.67)',1.67,1e99]];
+$('p_mat').innerHTML=MATS.map((m,i)=>`<option value="${i}">${m[0]}${m[1]!==1&&i<5?' (k = '+m[1]+')':''}</option>`).join('');$('p_mat').value=2;
+function capCalc(){const A=val('p_A')*1e-4,d=val('p_d')*1e-3,V=val('p_V'),m=MATS[+$('p_mat').value],k=m[1],mode=document.querySelector('input[name=pmode]:checked').value,C0=E0*A/d,q0=C0*V,E0f=V/d,U0=.5*C0*V*V,C=k*C0;let Vd,q;if(mode==='iso'){q=q0;Vd=q0/C}else{Vd=V;q=C*V}const Ed=Vd/d;return{A,d,V,m,k,mode,C0,q0,E0f,U0,C,Vd,q,Ed,U:.5*q*Vd,brk:Ed>m[2]*1e6}}
+const SK=mkStage('st-cap',null,s=>{
+  const g=s.g,c=capCalc(),W=s.W,H=s.H,fs=W<520?13:15,tt=Math.sqrt((val('p_A')-10)/990),Wp=lerp(W*.26,W*.5,tt),Hd=lerp(18,H*.34,(val('p_d')-.5)/9.5),cx=W*.58,cy=H*.52,y0=cy-Hd/2,x0=cx-Wp/2,bx=W*.1;
+  s.geo={cx,cy,Wp,Hd,y0,x0,wmin:W*.26,wmax:W*.5,hmin:18,hmax:H*.34};
+  const wire=pts=>pencil(g,pts,3.5);
+  const gap=c.mode==='iso';
+  const t1=[[bx,cy-10],[bx,y0-6]],t2=[[bx,y0-6],[x0,y0-6]],b1=[[bx,cy+10],[bx,y0+Hd+6]],b2=[[bx,y0+Hd+6],[x0,y0+Hd+6]];
+  if(!gap){wire(t1);wire(t2);wire(b1);wire(b2)}else{wire(t1);wire([[bx,y0-6],[bx+(x0-bx)*.35,y0-6]]);wire([[bx+(x0-bx)*.6,y0-6],[x0,y0-6]]);pencil(g,[[bx+(x0-bx)*.35,y0-6],[bx+(x0-bx)*.55,y0-26]],3.5,'#d9483b');wire(b1);wire([[bx,y0+Hd+6],[bx+(x0-bx)*.35,y0+Hd+6]]);wire([[bx+(x0-bx)*.6,y0+Hd+6],[x0,y0+Hd+6]]);pencil(g,[[bx+(x0-bx)*.35,y0+Hd+6],[bx+(x0-bx)*.55,y0+Hd+26]],3.5,'#d9483b')}
+  pencil(g,[[bx-26,cy-10],[bx+26,cy-10]],4);pencil(g,[[bx-14,cy+10],[bx+14,cy+10]],7);g.font=`bold ${fs+2}px ${FONT}`;g.fillStyle='#d9483b';g.textAlign='left';g.fillText('+',bx+30,cy-6);g.fillStyle='#2f4fa8';g.fillText('−',bx+20,cy+16);
+  tagBox(g,bx,cy+44,c.mode==='iso'?'battery off':'battery on',{size:fs,bg:c.mode==='iso'?'#fbe6df':'#eef0d8'});
+  if(c.k>1){g.fillStyle='rgba(224,167,58,.38)';g.fillRect(x0,y0,Wp,Hd);g.save();g.beginPath();g.rect(x0,y0,Wp,Hd);g.clip();g.strokeStyle='rgba(58,51,44,.35)';g.lineWidth=1.5;for(let x=x0-Hd;x<x0+Wp;x+=14){g.beginPath();g.moveTo(x,y0+Hd);g.lineTo(x+Hd,y0);g.stroke()}g.restore()}
+  [[y0-12,'#d9483b','+'],[y0+Hd,'#2f4fa8','−']].forEach(([y,col,sg])=>{g.save();g.shadowColor='rgba(74,48,22,.3)';g.shadowBlur=6;g.shadowOffsetY=5;g.fillStyle='#fff';g.fillRect(x0-3,y-3,Wp+6,18);g.restore();g.fillStyle=col;g.fillRect(x0,y,Wp,12);g.strokeStyle=PEN;g.globalAlpha=.5;g.lineWidth=1.5;g.strokeRect(x0,y,Wp,12);g.globalAlpha=1;
+    const n=clamp(Math.round(Math.log10(Math.max(c.q*1e12,1))*3),2,18);g.fillStyle='#fff';g.font=`bold 13px ${FONT}`;g.textAlign='center';for(let i=0;i<n;i++)g.fillText(sg,x0+(i+.5)*Wp/n,y+10)});
+  if(Hd>34)for(let i=0;i<7;i++){const x=x0+(i+.5)*Wp/7;arrow(g,x,y0+5,x,y0+Hd-5,c.brk?'#d9483b':'#2f7f7a',2.5,8)}
+  pencil(g,[[x0+Wp+16,y0],[x0+Wp+16,y0+Hd]],2.5,'#d9483b');pencil(g,[[x0+Wp+10,y0],[x0+Wp+22,y0]],2.5,'#d9483b');pencil(g,[[x0+Wp+10,y0+Hd],[x0+Wp+22,y0+Hd]],2.5,'#d9483b');
+  tagBox(g,Math.min(x0+Wp+28,W-70),cy-(Hd<30?24:0),'d = '+val('p_d')+' mm',{a:'l',size:fs,bg:'#fbf7ee'});
+  tagBox(g,cx,y0+Hd+48,'A = '+val('p_A')+' cm²',{size:fs,bg:'#fbf7ee'});
+  if(c.k>1)tagBox(g,x0,y0-40,c.m[0].split(' (')[0]+', k = '+c.k,{a:'l',size:fs,bg:'#e0a73a'});
+  tagBox(g,cx,H-24,'C = '+eng(c.C,'F')+'    q = '+eng(c.q,'C')+'    U = '+eng(c.U,'J'),{size:fs+2,bg:c.brk?'#d9483b':'#f3ecdf',fg:c.brk?'#f3ecdf':'#2b2622'});
+  const R0=W<520?34:46,mx=W-R0-26,my=R0+66,tv=clamp(c.Vd/3000,0,1),an=Math.PI+tv*Math.PI;
+  g.save();g.shadowColor='rgba(74,48,22,.3)';g.shadowBlur=6;g.shadowOffsetY=5;g.fillStyle='#fff';g.beginPath();g.arc(mx,my,R0+5,Math.PI,0);g.lineTo(mx+R0+5,my+8);g.lineTo(mx-R0-5,my+8);g.fill();g.restore();g.fillStyle='#fbf7ee';g.beginPath();g.arc(mx,my,R0,Math.PI,0);g.lineTo(mx+R0,my+4);g.lineTo(mx-R0,my+4);g.fill();
+  for(let i=0;i<=6;i++){const a=Math.PI+i/6*Math.PI;pencil(g,[[mx+R0*.78*Math.cos(a),my+R0*.78*Math.sin(a)],[mx+R0*.94*Math.cos(a),my+R0*.94*Math.sin(a)]],2)}
+  pencil(g,[[mx,my],[mx+R0*.85*Math.cos(an),my+R0*.85*Math.sin(an)]],3.5,'#d9483b');dot(g,mx,my,4,PEN);tagBox(g,mx,my+26,'V = '+eng(c.Vd,'V'),{size:fs,bg:'#e0a73a'});
+  });
+(()=>{const dEl=flagEl('d','down'),aEl=flagEl('A','down');
+  mkItem(SK,dEl,{place:s=>{const o=s.geo||{cx:s.W*.58,y0:s.H*.4};return[o.cx,o.y0-12]},move:(px,py,s)=>{const o=s.geo,Hd=clamp(2*(o.cy-(py+12)),o.hmin,o.hmax);setv('p_d',clamp(Math.round((.5+(Hd-o.hmin)/(o.hmax-o.hmin)*9.5)*10)/10,.5,10));R.cap()}});
+  mkItem(SK,aEl,{place:s=>{const o=s.geo||{x0:s.W*.4,Wp:s.W*.3,cy:s.H*.5};return[o.x0+o.Wp,(o.y0||o.cy)+(o.Hd||20)+16]},move:(px,py,s)=>{const o=s.geo,Wp=clamp(2*(px-o.cx),o.wmin,o.wmax),t=(Wp-o.wmin)/(o.wmax-o.wmin);setv('p_A',clamp(Math.round((10+990*t*t)/10)*10,10,1000));R.cap()}})})();
+function capSym(g,x,y,h=34){g.save();pencil(g,[[x-7,y-h/2],[x-7,y+h/2]],4.5);pencil(g,[[x+7,y-h/2],[x+7,y+h/2]],4.5);g.restore()}
+R.cap=()=>{SK.render();
+  const c=capCalc(),u0=.5*E0*c.E0f*c.E0f,ud=.5*c.k*E0*c.Ed*c.Ed,m=c.m;
+  $('p_warn').innerHTML=c.brk?`<span class="tag r">DIELECTRIC BREAKDOWN</span> E = ${eng(c.Ed,'V/m')} exceeds the ${m[0].split(' (')[0].toLowerCase()} strength (${m[2]} kV/mm).`:`<span class="tag g">Safe</span> field ${eng(c.Ed,'V/m')}${m[2]<1e90?' is below the dielectric strength of '+m[2]+' kV/mm':' (no breakdown limit for this material)'}.`;
+  $('p_table').innerHTML=`<table><tr><th></th><th>Quantity</th><th>Without dielectric</th><th>With dielectric</th></tr>
+  <tr><td>Capacitance</td><td>C = ε₀A/d, C = kC₀</td><td>${eng(c.C0,'F')}</td><td>${eng(c.C,'F')}</td></tr>
+  <tr><td>Voltage</td><td>V</td><td>${eng(c.V,'V')}</td><td>${eng(c.Vd,'V')}</td></tr>
+  <tr><td>Charge</td><td>q = CV</td><td>${eng(c.q0,'C')}</td><td>${eng(c.q,'C')}</td></tr>
+  <tr><td>Field</td><td>E = V/d</td><td>${eng(c.E0f,'V/m')}</td><td>${eng(c.Ed,'V/m')}</td></tr>
+  <tr><td>Stored energy</td><td>U = ½CV²</td><td>${eng(c.U0,'J')}</td><td>${eng(c.U,'J')}</td></tr>
+  <tr><td>Energy density</td><td>u = ½εE²</td><td>${eng(u0,'J/m³')}</td><td>${eng(ud,'J/m³')}</td></tr></table>
+  <p class="hint">${c.mode==='iso'?'Battery disconnected: q cannot change, so V drops to V₀/k, exactly as in the voltmeter experiment of Fig. 5.7. Energy drops too (U = U₀/k): the slab is pulled in.':'Battery connected: V is held, so charge flows in and q grows by the factor k.'}</p>`;
+  const N=[1,2,3,4].map(i=>val('n_c'+i)*1e-6),Vs=val('n_v'),ser=document.querySelector('input[name=nmode]:checked').value==='ser';
+  const Ce=ser?1/N.reduce((s,x)=>s+1/x,0):N.reduce((s,x)=>s+x,0),qt=Ce*Vs;
+  const rows=N.map((x,i)=>{const qi=ser?qt:x*Vs,vi=ser?qt/x:Vs;return`<tr><td>C${i+1}</td><td>${eng(x,'F')}</td><td>${eng(qi,'C')}</td><td>${eng(vi,'V')}</td></tr>`}).join('');
+  $('n_out').innerHTML=`<table><tr><th></th><th>C</th><th>charge</th><th>voltage</th></tr>${rows}<tr><td><b>Equivalent</b></td><td><b>${eng(Ce,'F')}</b></td><td>${eng(qt,'C')}</td><td>${eng(Vs,'V')}</td></tr></table>
+  <p class="hint">${ser?'Series: same charge on each, voltages add up (1/C = Σ1/Cᵢ).':'Parallel: same voltage on each, charges add up (C = ΣCᵢ).'} Energy stored: ${eng(.5*Ce*Vs*Vs,'J')}</p>`;
+  const f=fit($('nc')),g=f.g,W=f.W,H=f.H;g.clearRect(0,0,W,H);wash(g,W,H,5);const fs=W<420?12:14;g.font=`${fs}px ${FONT}`;g.textAlign='center';
+  if(ser){const y=H*.45,x0=W*.1,x1=W*.9;pencil(g,[[x0,y+H*.3],[x0,y-H*.25],[x1,y-H*.25],[x1,y+H*.3],[x0,y+H*.3]],3);pencil(g,[[x0-14,y+H*.3],[x0+14,y+H*.3]],6);
+    N.forEach((x,i)=>{const cx=lerp(x0,x1,(i+1)/5);g.save();g.fillStyle='#fbf7ee';g.fillRect(cx-16,y-H*.25-12,32,24);g.restore();capSym(g,cx,y-H*.25,26);tagBox(g,cx,y-H*.25-30,'C'+(i+1)+' '+eng(x,'F',2),{size:fs,bg:'#fbf7ee'});tagBox(g,cx,y-H*.25+34,eng(qt/x,'V',3),{size:fs,bg:'#e0a73a'})});
+    tagBox(g,W/2,H*.88,'same q = '+eng(qt,'C')+' on each',{size:fs+2,bg:'#f3ecdf'})}
+  else{const xl=W*.12,xr=W*.88,yt=H*.14,yb=H*.64;pencil(g,[[xl,yt],[xr,yt]],3);pencil(g,[[xl,yb],[xr,yb]],3);pencil(g,[[xl,yt],[xl,yb]],3);
+    N.forEach((x,i)=>{const cx=lerp(xl,xr,(i+.5)/4+(i===0?.0:0)*0);const px=lerp(W*.2,W*.82,i/3);pencil(g,[[px,yt],[px,(yt+yb)/2-14]],3);pencil(g,[[px,(yt+yb)/2+14],[px,yb]],3);g.save();pencil(g,[[px-14,(yt+yb)/2-7],[px+14,(yt+yb)/2-7]],4.5);pencil(g,[[px-14,(yt+yb)/2+7],[px+14,(yt+yb)/2+7]],4.5);g.restore();tagBox(g,px,yt+26,'C'+(i+1)+' '+eng(x,'F',2),{size:fs,bg:'#fbf7ee'});tagBox(g,px,yb-26,eng(x*Vs,'C',3),{size:fs,bg:'#e0a73a'})});
+    tagBox(g,W/2,H*.88,'same V = '+Vs+' V across each',{size:fs+2,bg:'#f3ecdf'})}
+};
+$('p_ex').onclick=()=>{setv('p_A',400);setv('p_d',5);setv('p_V',2500);$('p_mat').value=5;document.querySelector('input[name=pmode][value=iso]').checked=true;R.cap()};
+$('n_ctl').innerHTML=[2,1.5,4,2.5].map((v,i)=>ctl('n_c'+(i+1),'C'+(i+1),.1,10,.1,v,'µF')).join('')+ctl('n_v','Source voltage',1,500,1,200,'V');
+$('n_ex').onclick=()=>{[2,1.5,4,2.5].forEach((v,i)=>setv('n_c'+(i+1),v));setv('n_v',200);R.cap()};
+
+/* ---------- Ch6 Current ---------- */
+const RHO=[['Copper',1.7e-8,'#c9772f'],['Aluminium',2.8e-8,'#aeb7bd'],['Tungsten',5.6e-8,'#7a7468'],['Iron',1e-7,'#8b6f5b'],['Nichrome',1.5e-6,'#b98f5e']];
+$('o_mat').innerHTML=RHO.map((m,i)=>`<option value="${i}">${m[0]}</option>`).join('');
+$('o_ctl').innerHTML=ctl('o_L','Length L',1,200,1,50,'m')+ctl('o_dia','Diameter',.1,5,.05,1,'mm')+ctl('o_V','Voltage V',1,240,1,12,'V');
+$('s_ctl').innerHTML=ctl('s_1','R₁',0,3,.01,Math.log10(100),'Ω',1)+ctl('s_2','R₂',0,3,.01,Math.log10(220),'Ω',1)+ctl('s_3','R₃',0,3,.01,Math.log10(330),'Ω',1);
+$('k_ctl').innerHTML=ctl('k_e1','ε₁ (bottom)',0,120,1,80,'V')+ctl('k_e2','ε₂ (middle)',0,120,1,45,'V')+ctl('k_r1','R₁ (top)',1,100,1,30,'Ω')+ctl('k_r2','R₂ (bottom)',1,100,1,21,'Ω')+ctl('k_r3','R₃ (middle)',1,100,1,41,'Ω');
+$('rc_ctl').innerHTML=ctl('rc_R','Resistance R',3,7,.01,Math.log10(4e6),'Ω',1)+ctl('rc_C','Capacitance C',-2,1,.01,Math.log10(.2),'µF',1)+ctl('rc_E','EMF ε',1,50,1,12,'V')+ctl('rc_t','Time t (in units of RC)',0,5,.01,1,'× RC');
+function rcVals(){const Rr=val('rc_R'),Cc=val('rc_C')*1e-6,Ee=val('rc_E'),tau=Rr*Cc,x=val('rc_t'),dis=document.querySelector('input[name=rcmode]:checked').value==='dis',e=Math.exp(-x),qm=Cc*Ee,I0=Ee/Rr,q=dis?qm*e:qm*(1-e),I=dis?-I0*e:I0*e;return{Rr,Cc,Ee,tau,x,dis,e,qm,I0,q,I}}
+const SR=mkStage('st-rc',null,s=>{
+  const g=s.g,v=rcVals(),W=s.W,H=s.H,land=W>H*1.15,cb=land?{x:0,y:0,w:W*.44,h:H}:{x:0,y:0,w:W,h:H*.48},pb=land?{x:W*.44,y:0,w:W*.56,h:H}:{x:0,y:H*.48,w:W,h:H*.52},fs=W<520?13:15;
+  const L=cb.x+cb.w*.2,Rt=cb.x+cb.w*.8,T=cb.y+cb.h*.26,B=cb.y+cb.h*.74,ym=(T+B)/2,mx=(L+Rt)/2,fr=v.q/v.qm;
+  pencil(g,[[L,B],[Rt,B]],3.5);pencil(g,[[L,T],[mx-44,T]],3.5);pencil(g,[[mx+44,T],[Rt,T]],3.5);zig(g,mx-44,T,mx+44,5,10);
+  pencil(g,[[Rt,T],[Rt,ym-14]],3.5);pencil(g,[[Rt,ym+14],[Rt,B]],3.5);
+  g.save();g.fillStyle=`rgba(217,72,59,${(.08+.4*fr).toFixed(2)})`;g.fillRect(Rt-22,ym-8,44,16);g.restore();
+  pencil(g,[[Rt-24,ym-9],[Rt+24,ym-9]],5,'#d9483b');pencil(g,[[Rt-24,ym+9],[Rt+24,ym+9]],5,'#2f4fa8');
+  const n=Math.round(1+5*fr);g.font=`bold 15px ${FONT}`;g.textAlign='center';for(let i=0;i<n;i++){const x=Rt-18+i*(36/Math.max(n-1,1));g.fillStyle='#d9483b';g.fillText('+',n===1?Rt:x,ym-14);g.fillStyle='#2f4fa8';g.fillText('−',n===1?Rt:x,ym+25)}
+  pencil(g,[[L,T],[L,ym-14]],3.5);pencil(g,[[L,ym+14],[L,B]],3.5);
+  g.save();if(v.dis)g.globalAlpha=.35;pencil(g,[[L-24,ym-7],[L+24,ym-7]],4.5);pencil(g,[[L-13,ym+9],[L+13,ym+9]],7);g.restore();
+  if(v.dis){pencil(g,[[L,ym-14],[L,ym+14]],3.5);tagBox(g,L,ym+40,'battery out',{size:fs,bg:'#fbe6df'})}
+  tagBox(g,mx,T-30,'R = '+eng(v.Rr,'Ω'),{size:fs,bg:'#fbf7ee'});tagBox(g,Rt,ym+52,'C = '+eng(v.Cc,'F'),{size:fs,bg:'#fbf7ee'});if(!v.dis)tagBox(g,L,ym-42,'ε = '+v.Ee+' V',{size:fs,bg:'#e0a73a'});
+  const loop=[[L,B],[L,T],[Rt,T],[Rt,B],[L,B]],segs=[];let tot=0;for(let i=0;i<4;i++){const l=Math.hypot(loop[i+1][0]-loop[i][0],loop[i+1][1]-loop[i][1]);segs.push(l);tot+=l}
+  const nd=Math.round(14*Math.abs(v.I)/v.I0),dirn=v.dis?-1:1;for(let k=0;k<nd;k++){let d=((k+.5)/nd*tot)*dirn;d=(d%tot+tot)%tot;let i=0;while(d>segs[i]){d-=segs[i];i++}const a=loop[i],b=loop[i+1],t=d/segs[i],px=lerp(a[0],b[0],t),py=lerp(a[1],b[1],t);if(Math.abs(px-mx)<46&&Math.abs(py-T)<14)continue;if(Math.abs(px-Rt)<4&&Math.abs(py-ym)<16)continue;if(Math.abs(px-L)<4&&Math.abs(py-ym)<16)continue;dot(g,px,py,4,'#e0a73a')}
+  tagBox(g,cb.x+cb.w/2,cb.y+cb.h-22,v.dis?'discharging through R':'charging through R',{size:fs+2,bg:'#f3ecdf'});
+  const qf=v.dis?(z=>Math.exp(-z)):(z=>1-Math.exp(-z)),If=v.dis?(z=>-Math.exp(-z)):(z=>Math.exp(-z));
+  plot(g,pb,{xmin:0,xmax:5,ymin:v.dis?-1.1:-.05,ymax:1.1,xl:'t / RC',yl:'fraction of final q, or of ε/R',series:[{fn:qf,color:'#2f7f7a',label:'q / (Cε)'},{fn:If,color:'#d9483b',label:'I / (ε/R)'}],vlines:[{x:v.x,color:'#e0a73a'}],marks:[{x:v.x,y:qf(v.x),color:'#2f7f7a'},{x:v.x,y:If(v.x),color:'#d9483b'}]})});
+let rcAnim=0;
+R.cur=()=>{SR.render();
+  const rho=RHO[+$('o_mat').value],L=val('o_L'),dia=val('o_dia')/1000,A=Math.PI*dia*dia/4,Rw=rho[1]*L/A,V=val('o_V'),I=V/Rw;
+  $('o_out').innerHTML=`<div>R = ρL/A = <b>${eng(Rw,'Ω')}</b></div><div>I = V/R = <b>${eng(I,'A')}</b></div><div>P = IV = <b>${eng(I*V,'W')}</b></div><div>Current density J = I/A = ${eng(I/A,'A/m²')}</div>`;
+  {const f=fit($('ow')),g=f.g,W=f.W,H=f.H;g.clearRect(0,0,W,H);wash(g,W,H,3);const wl=lerp(W*.3,W*.72,L/200),wt=lerp(8,44,(val('o_dia')-.1)/4.9),x0=W*.18,y=H*.45;
+    g.save();g.shadowColor='rgba(74,48,22,.3)';g.shadowBlur=6;g.shadowOffsetY=5;g.fillStyle='#fff';g.fillRect(x0-4,y-wt/2-4,wl+8,wt+8);g.restore();g.fillStyle=rho[2];g.fillRect(x0,y-wt/2,wl,wt);pencil(g,[[x0,y-wt/2],[x0+wl,y-wt/2]],2);pencil(g,[[x0,y+wt/2],[x0+wl,y+wt/2]],2);
+    const nd=clamp(Math.round(Math.log10(Math.max(I,1e-6)*1e6)*2),1,12);for(let i=0;i<nd;i++)dot(g,x0+(i+.5)*wl/nd,y,Math.min(5,wt/3),'#e0a73a');
+    cutArrow(g,x0-48,y,x0-6,y,'#e0a73a',10);tagBox(g,x0-30,y-26,eng(I,'A'),{size:14,bg:'#e0a73a'});tagBox(g,x0+wl/2,y+wt/2+28,'L = '+L+' m',{size:15,bg:'#fbf7ee'});tagBox(g,x0+wl+30,y,'d = '+val('o_dia')+' mm',{size:14,bg:'#fbf7ee',a:'l'});tagBox(g,W/2,H*.86,rho[0]+', R = '+eng(Rw,'Ω'),{size:16,bg:'#f3ecdf'})}
+  const r=[1,2,3].map(i=>val('s_'+i)),Rs=r[0]+r[1]+r[2],Rp=1/(1/r[0]+1/r[1]+1/r[2]);
+  $('s_out').innerHTML=`<div>R<sub>series</sub> = R₁ + R₂ + R₃ = <b>${eng(Rs,'Ω')}</b></div><div>R<sub>parallel</sub> = (1/R₁ + 1/R₂ + 1/R₃)<sup>-1</sup> = <b>${eng(Rp,'Ω')}</b></div><div class="hint">Series: R adds, same current. Parallel: conductances add, same voltage, and the result is smaller than the smallest R.</div>`;
+  {const f=fit($('sc')),g=f.g,W=f.W,H=f.H;g.clearRect(0,0,W,H);wash(g,W,H,9);const fs=W<420?12:14,y=H*.24;pencil(g,[[W*.06,y],[W*.94,y]],3);[1,2,3].forEach(i=>{const cx=W*(.2+(i-1)*.3);g.fillStyle='#fbf7ee';g.fillRect(cx-W*.1,y-14,W*.2,28);zig(g,cx-W*.1,y,cx+W*.1,4,9);tagBox(g,cx,y-30,'R'+i+' '+eng(r[i-1],'Ω',2),{size:fs,bg:'#fbf7ee'})});tagBox(g,W/2,y+30,'series: '+eng(Rs,'Ω'),{size:fs+2,bg:'#e0a73a'});
+    const yt=H*.58,yb=H*.9,xl=W*.1,xr=W*.9;pencil(g,[[xl,yt],[xl,yb],[xr,yb],[xr,yt],[xl,yt]],3);[1,2,3].forEach(i=>{const px=W*(.3+(i-1)*.2);g.fillStyle='#fbf7ee';g.fillRect(px-10,yt+2,20,yb-yt-4);pencil(g,[[px,yt],[px,yt+8]],3);pencil(g,[[px,yb-8],[px,yb]],3);const g2=g;g2.save();g2.translate(px,(yt+yb)/2);g2.rotate(Math.PI/2);zig(g2,-(yb-yt)*.3,0,(yb-yt)*.3,4,8);g2.restore();tagBox(g,px,yt+(yb-yt)*.5-((yb-yt)*.3+20),'R'+i,{size:fs-1,bg:'#fbf7ee'})});tagBox(g,W/2,yt-16,'parallel: '+eng(Rp,'Ω'),{size:fs+2,bg:'#e0a73a'})}
+  const e1=val('k_e1'),e2=val('k_e2'),r1=val('k_r1'),r2=val('k_r2'),r3=val('k_r3');
+  const a11=r1+r3,a12=r3,a21=r3,a22=r2+r3,b1=e2,b2=e1+e2,det=a11*a22-a12*a21,I1=(b1*a22-a12*b2)/det,I2=(a11*b2-a21*b1)/det,I3=I1+I2;
+  const ff=x=>`${x.toFixed(2)} A${x<0?' <span class="tag w">reversed</span>':''}`;
+  $('k_out').innerHTML=`<div>I₁ = <b>${ff(I1)}</b></div><div>I₂ = <b>${ff(I2)}</b></div><div>I₃ = I₁ + I₂ = <b>${ff(I3)}</b></div>`;
+  $('k_eq').innerHTML=`<div>(a) I₃ = I₁ + I₂</div><div>(b) ${e2} = ${r1}·I₁ + ${r3}·I₃</div><div>(c) ${e1+e2} = ${r2}·I₂ + ${r3}·I₃</div><div class="hint">Cramer's rule on the two reduced equations: determinant = ${det.toFixed(0)}.</div>`;
+  {const f=fit($('kc')),g=f.g,W=f.W,H=f.H;g.clearRect(0,0,W,H);wash(g,W,H,13);const fs=W<420?12:14,xa=W*.16,xd=W*.84,ys=[H*.18,H*.5,H*.82];pencil(g,[[xa,ys[0]],[xa,ys[2]]],3.5);pencil(g,[[xd,ys[0]],[xd,ys[2]]],3.5);
+    dot(g,xa,ys[1],6,'#2f7f7a');dot(g,xd,ys[1],6,'#2f7f7a');tagBox(g,xa-2,ys[1]-24,'a',{size:fs,bg:'#fbf7ee'});tagBox(g,xd+2,ys[1]-24,'d',{size:fs,bg:'#fbf7ee'});
+    const bar=(y,lab,comp,Iv,col,flip)=>{pencil(g,[[xa,y],[xd,y]],3.5);g.fillStyle='#fbf7ee';g.fillRect(W*.38,y-18,W*.26,36);if(comp==='R')zig(g,W*.38,y,W*.64,4,10);else{pencil(g,[[W*.4,y-14],[W*.4,y+14]],6);pencil(g,[[W*.44,y-8],[W*.44,y+8]],3);zig(g,W*.48,y,W*.64,3,9)}
+      tagBox(g,W*.51,y-30,lab,{size:fs,bg:'#fbf7ee'});const left=(Iv>=0)!==flip,x1=left?W*.36:W*.66,x2=left?W*.2:W*.82;cutArrow(g,x1,y,x2,y,col,9);tagBox(g,(x1+x2)/2,y+26,Math.abs(Iv).toFixed(2)+' A',{size:fs-1,bg:col,fg:'#2b2622'})};
+    bar(ys[0],'R₁ = '+r1+' Ω','R',I1,'#e0a73a',false);bar(ys[1],'ε₂ = '+e2+' V, R₃ = '+r3+' Ω','E',I3,'#9dbb8e',true);bar(ys[2],'ε₁ = '+e1+' V, R₂ = '+r2+' Ω','E',I2,'#f1a9a0',false)}
+  };
+$('o_mat').oninput=()=>R.cur();
+$('k_ex').onclick=()=>{[['k_e1',80],['k_e2',45],['k_r1',30],['k_r2',21],['k_r3',41]].forEach(a=>setv(a[0],a[1]));R.cur()};
+$('rc_ex').onclick=()=>{setv('rc_R',4e6);setv('rc_C',.2);setv('rc_E',12);setv('rc_t',1);document.querySelector('input[name=rcmode][value=ch]').checked=true;R.cur()};
+$('rc_play').onclick=()=>{if(rcAnim){cancelAnimationFrame(rcAnim);rcAnim=0;$('rc_play').textContent='Play';return}if(val('rc_t')>=4.95)setv('rc_t',0);$('rc_play').textContent='Pause';let last=performance.now();const step=now=>{const dt=(now-last)/1000;last=now;const x=Math.min(5,val('rc_t')+dt*(.5+val('rc_t')*.2));setv('rc_t',x);R.cur();if(x>=5){rcAnim=0;$('rc_play').textContent='Play';return}rcAnim=requestAnimationFrame(step)};rcAnim=requestAnimationFrame(step)};
+(function(){const old=R.cur;R.cur=()=>{old();const v=rcVals();$('rc_out').innerHTML=`<div>Time constant RC = <b>${eng(v.tau,'s')}</b>; t = ${eng(v.x*v.tau,'s')}</div><div>q = <b>${eng(v.q,'C')}</b> (${(v.q/v.qm*100).toFixed(1)}% of Cε = ${eng(v.qm,'C')})</div><div>I = <b>${eng(v.I,'A')}</b> (${(Math.abs(v.I)/v.I0*100).toFixed(1)}% of ε/R = ${eng(v.I0,'A')})</div><div>V<sub>C</sub> = ${eng(v.q/v.Cc,'V')}, V<sub>R</sub> = ${eng(Math.abs(v.I)*v.Rr,'V')}</div>`}})();
+
+/* ---------- Ch7 AC ---------- */
+$('a_ctl').innerHTML=ctl('a_R','Resistance R',0,4,.01,Math.log10(800),'Ω',1)+ctl('a_L','Inductance L',-3,1,.01,Math.log10(1.5),'H',1)+ctl('a_C','Capacitance C',-1,2,.01,Math.log10(2),'µF',1)+ctl('a_f','Frequency f',0,4,.001,Math.log10(400/(2*Math.PI)),'Hz',1)+ctl('a_V','Source V (rms)',1,300,1,210,'V');
+$('t_ctl').innerHTML=ctl('t_np','Primary turns N<sub>p</sub>',10,500,10,80,'turns')+ctl('t_ns','Secondary turns N<sub>s</sub>',10,500,10,280,'turns')+ctl('t_vp','Input V<sub>p</sub>',1,240,1,12,'V');
+let acS={};
+function acVals(){const Rr=val('a_R'),L=val('a_L'),C=val('a_C')*1e-6,f=val('a_f'),V=val('a_V'),w=2*Math.PI*f,XL=w*L,XC=1/(w*C),X=XL-XC,Z=Math.hypot(Rr,X),I=V/Z,phi=Math.atan2(X,Rr),f0=1/(2*Math.PI*Math.sqrt(L*C));return{Rr,L,C,f,V,w,XL,XC,X,Z,I,phi,f0,VR:I*Rr,VL:I*XL,VC:I*XC}}
+const SA=mkStage('st-ac',null,s=>{
+  const g=s.g,a=acVals(),W=s.W,H=s.H,land=W>H*1.15,ph=land?{x:0,y:0,w:W*.42,h:H}:{x:0,y:0,w:W,h:H*.52},wv=land?{x:W*.42,y:0,w:W*.58,h:H}:{x:0,y:H*.52,w:W,h:H*.48},fs=W<520?13:15;
+  const ox=ph.x+ph.w*.22,oy=ph.y+ph.h*.52,sc=Math.min(ph.w*.6,ph.h*.34)/Math.max(a.VR,a.VL,a.VC,a.V,Math.abs(a.VL-a.VC),1e-9);
+  pencil(g,[[ph.x+14,oy],[ph.x+ph.w-14,oy]],1.5);pencil(g,[[ox,ph.y+30],[ox,ph.y+ph.h-30]],1.5);
+  const tipx=ox+a.VR*sc,tipy=oy-(a.VL-a.VC)*sc;g.save();g.setLineDash([6,6]);pencil(g,[[tipx,oy],[tipx,tipy]],2,'#6a5d4d');g.restore();
+  cutArrow(g,ox,oy,tipx,oy,'#7c8a3c',11);cutArrow(g,ox,oy,ox,oy-a.VL*sc,'#d9483b',11);cutArrow(g,ox,oy,ox,oy+a.VC*sc,'#2f4fa8',11);cutArrow(g,ox,oy,tipx,tipy,'#e0a73a',13);
+  tagBox(g,ox+a.VR*sc/2+8,oy+30,'V_R '+eng(a.VR,'V',3),{size:fs,bg:'#fbf7ee'});tagBox(g,ox+60,oy-a.VL*sc-4,'V_L '+eng(a.VL,'V',3),{size:fs,bg:'#fbf7ee'});tagBox(g,ox+60,oy+a.VC*sc+4,'V_C '+eng(a.VC,'V',3),{size:fs,bg:'#fbf7ee'});tagBox(g,tipx+Math.min(70,ph.w*.2),tipy-22,'V '+a.V+' V',{size:fs,bg:'#e0a73a'});
+  tagBox(g,ph.x+ph.w/2,ph.y+ph.h-24,'φ = '+(a.phi*180/Math.PI).toFixed(1)+'°   Z = '+eng(a.Z,'Ω'),{size:fs+2,bg:'#f3ecdf'});
+  const ph0=a.phi;plot(g,wv,{xmin:0,xmax:2,ymin:-1.15,ymax:1.15,xl:'time (periods)',yl:'normalised',series:[{fn:x=>Math.sin(2*Math.PI*x),color:'#2f7f7a',label:'current'},{fn:x=>Math.sin(2*Math.PI*x+ph0),color:'#d9483b',label:'voltage'}]})});
+R.ac=()=>{SA.render();
+  const a=acVals();acS={f0:a.f0};const{Rr,f,V,w,XL,XC,X,Z,I,phi,f0,VR,VL,VC}=a;
+  $('a_out').innerHTML=`<div>ω = 2πf = ${w.toFixed(1)} rad/s</div><div>X<sub>L</sub> = ωL = <b>${eng(XL,'Ω')}</b>, X<sub>C</sub> = 1/ωC = <b>${eng(XC,'Ω')}</b></div><div>Z = <b>${eng(Z,'Ω')}</b></div><div>I<sub>rms</sub> = V/Z = <b>${eng(I,'A')}</b></div><div>φ = <b>${(phi*180/Math.PI).toFixed(1)}°</b> ${Math.abs(X)<1e-6*Z?'<span class="tag g">resonance</span>':X>0?'<span class="tag r">inductive: V leads I</span>':'<span class="tag b">capacitive: I leads V</span>'}</div><div>V<sub>R</sub> = ${eng(VR,'V')}, V<sub>L</sub> = ${eng(VL,'V')}, V<sub>C</sub> = ${eng(VC,'V')}</div><div>Resonant frequency f₀ = <b>${eng(f0,'Hz')}</b></div><div class="hint">V<sub>R</sub> + V<sub>L</sub> + V<sub>C</sub> = ${eng(VR+VL+VC,'V')} ≠ source ${V} V because the three voltages are not in phase.</div>`;
+  const ph=phi*180/Math.PI;$('a_phase').innerHTML=Math.abs(ph)<.05?'Current and voltage are in phase.':ph>0?`Voltage leads current by ${ph.toFixed(1)}° (X<sub>L</sub> &gt; X<sub>C</sub>).`:`Current leads voltage by ${(-ph).toFixed(1)}° (X<sub>L</sub> &lt; X<sub>C</sub>).`;
+  const fm=Math.max(f0*2.5,f*1.3,20);
+  plotCv($('ar'),{xmin:0,xmax:fm,ymin:0,ymax:V/Math.max(Rr,1e-9)*1.1,xl:'frequency (Hz)',yl:'I rms (A)',series:[{fn:x=>{const ww=2*Math.PI*x;return V/Math.hypot(Rr,ww*a.L-1/(ww*a.C))},color:'#2f7f7a'}],vlines:[{x:f0,color:'#7c8a3c'}],marks:[{x:f,y:I,color:'#e0a73a',label:'now'}]});
+  const np=val('t_np'),ns=val('t_ns'),vp=val('t_vp'),vs=ns/np*vp;
+  $('t_out').innerHTML=`<div>V<sub>s</sub> = (N<sub>s</sub>/N<sub>p</sub>) V<sub>p</sub> = <b>${vs.toFixed(1)} V</b> ${ns>np?'<span class="tag r">step-up</span>':ns<np?'<span class="tag b">step-down</span>':'<span class="tag g">1:1</span>'}</div><div class="hint">Book check: N<sub>p</sub> = 80, V<sub>p</sub> = 12 V, V<sub>s</sub> = 42 V needs N<sub>s</sub> = 280 turns (preset).</div>`;
+  const f2=fit($('tc')),g=f2.g,W2=f2.W,H2=f2.H;g.clearRect(0,0,W2,H2);wash(g,W2,H2,21);const cx0=W2*.28,cx1=W2*.72,ct=H2*.16,cb=H2*.7;
+  g.save();g.shadowColor='rgba(74,48,22,.3)';g.shadowBlur=6;g.shadowOffsetY=5;g.strokeStyle='#fff';g.lineWidth=26;g.strokeRect(cx0,ct,cx1-cx0,cb-ct);g.restore();g.strokeStyle='#b98f5e';g.lineWidth=18;g.strokeRect(cx0,ct,cx1-cx0,cb-ct);
+  const coil=(x,n,col)=>{const m=clamp(Math.round(n/25),2,16);for(let i=0;i<m;i++){const y=ct+14+i*((cb-ct-28)/m);pencil(g,[[x-20,y],[x+20,y+7]],6,'#fff');pencil(g,[[x-20,y],[x+20,y+7]],4,col)}};
+  coil(cx0,np,'#d9483b');coil(cx1,ns,'#7c8a3c');const fs=W2<420?13:15;
+  tagBox(g,cx0,cb+34,'Np = '+np+'  Vp = '+vp+' V',{size:fs,bg:'#fbe6df'});tagBox(g,cx1,cb+34,'Ns = '+ns+'  Vs = '+vs.toFixed(1)+' V',{size:fs,bg:'#eef0d8'})};
+$('a_ex').onclick=()=>{setv('a_R',800);setv('a_L',1.5);setv('a_C',2);setv('a_f',400/(2*Math.PI));setv('a_V',210);R.ac()};
+$('a_res').onclick=()=>{setv('a_f',acS.f0);R.ac()};
+
+/* ---------- Quiz ---------- */
+const QS=[
+['You rub two balloons on your hair, so both get the same kind of charge. What happens when you bring them close together?',['They push each other away','They stick together','Nothing happens','They spin in circles'],0,'Same kind pushes away. Opposite kinds pull together, like magnets.','Same kind of charge pushes apart. That is the basic rule behind Coulomb\'s law.'],
+['Two charged balls pull on each other with a strength of 8. The rule: if you move them twice as far apart, the pull becomes 4 times weaker. What is the pull now?',['2','4','16','32'],0,'Share 8 into 4 equal parts.','8 ÷ 4 = 2. Doubling the distance makes the force 4 times smaller (the inverse-square law).'],
+['Before rubbing, two socks have 0 charge in total. Rubbing moves 3 charges from sock A to sock B. Charge is never lost, only moved. What is the total charge of the two socks now?',['0','3','6','−3'],0,'A lost 3 and B gained 3. Add them up.','+3 and −3 cancel, so the total stays 0. This is conservation of charge.'],
+['The electric field is just "push felt by each unit of charge". A charge of 2 units feels a push of 10. How much push does each single unit feel?',['5','8','12','20'],0,'Split 10 into 2 equal parts.','10 ÷ 2 = 5 per unit of charge. That is E = F / q.'],
+['A battery gives every unit of charge 4 units of energy (that is all "4 volts" means). How much energy do 3 units of charge get?',['12','7','16','1'],0,'3 groups of 4.','3 × 4 = 12. Energy = charge × voltage.'],
+['A capacitor is a bucket for charge. Two buckets side by side simply add their sizes. A 3-unit bucket and a 5-unit bucket side by side hold how much in total?',['8','2','15','3'],0,'Just add them.','3 + 5 = 8. Capacitors in parallel add up.'],
+['Rule: current = voltage ÷ resistance. A 12-volt battery pushes through a resistance of 4. What is the current?',['3','8','16','48'],0,'How many 4s fit into 12?','12 ÷ 4 = 3 amps. That is Ohm\'s law.'],
+['Charge cannot pile up where wires meet. 5 units flow into a junction, and 2 units flow out along one wire. How much flows out along the other wire?',['3','7','2','10'],0,'What is left after taking 2 away from 5?','5 − 2 = 3. Current in equals current out (Kirchhoff\'s first law).'],
+['Wall current keeps reversing direction: it reverses 2 times in every cycle, and it does 50 cycles each second. How many reversals happen in one second?',['100','50','25','200'],0,'50 cycles, 2 reversals each.','50 × 2 = 100 reversals per second. That is alternating current.'],
+['A transformer\'s output coil has twice as many turns as its input coil, so it doubles the voltage. The input is 110 volts. What is the output?',['220','55','110','440'],0,'Double 110.','2 × 110 = 220 volts. Output voltage follows the turns ratio.']];
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let order=QS.map((_,i)=>i),done={},wrong={},fts=0,oo=QS.map(q=>shuf(q[1].map((_,k)=>k)));
+function chk(c){if(!c.querySelector('.chk'))c.insertAdjacentHTML('beforeend','<svg class="chk" viewBox="0 0 50 50" aria-hidden="true"><path pathLength="1" d="M6 28 L20 42 L44 8"/></svg>')}
+function renderQuiz(){
+  $('quiz').innerHTML=order.map((i,n)=>{const q=QS[i],w=wrong[i]||[];return`<div class="card q${done[i]?' ok':''}" id="qq${i}" style="margin-bottom:12px"><div class="qt"><b>${n+1}.</b> ${q[0]}</div><div class="opts">${oo[i].map((k,j)=>`<button class="opt${done[i]&&k===q[2]?' good':''}${w.includes(k)?' nope':''}" data-q="${i}" data-o="${k}"${done[i]||w.includes(k)?' disabled':''}><b>${'ABCD'[j]}</b><span>${q[1][k]}</span></button>`).join('')}</div><div class="row"><button data-h="${i}">Hint</button></div><div class="fb" id="qf${i}">${done[i]?`<span class="tag g">Correct</span> ${q[4]}`:''}</div></div>`}).join('');
+  order.forEach(i=>{if(done[i])chk($('qq'+i))});score();if($('p-quiz').classList.contains('on'))pops($('quiz').querySelectorAll('.card'),60)}
+function fx(ok,i){const c=$('qq'+i);if(ok){const p=c.querySelector('.chk path');if(p)drawOn(p,0,420);const r=c.getBoundingClientRect();confetti(r.right-50,r.top+30);heroShow('yes!',cheerPose,['dEx','dExD'])}else heroShow('hmm?',shiverPose,['dQ','dQD'])}
+function pick(i,k){if(done[i])return;const q=QS[i],c=$('qq'+i),b=c.querySelector(`[data-o="${k}"]`);
+  if(k===q[2]){if(!(wrong[i]||[]).length)fts++;done[i]=true;c.classList.add('ok');c.querySelectorAll('.opt').forEach(o=>{o.disabled=true;if(+o.dataset.o===k)o.classList.add('good')});chk(c);$('qf'+i).innerHTML=`<span class="tag g">Correct</span> ${q[4]}`;fx(true,i)}
+  else{(wrong[i]=wrong[i]||[]).push(k);b.classList.add('nope');b.disabled=true;$('qf'+i).innerHTML='<span class="tag r">Not quite</span> Try another one, or tap Hint.';fx(false,i)}
+  score()}
+function score(){const n=Object.values(done).filter(Boolean).length;$('q_score').textContent=`Score: ${n} / ${QS.length}`+(fts?`  (${fts} first try)`:'')}
+$('quiz').onclick=e=>{const o=e.target.closest('.opt');if(o&&!o.disabled){pick(+o.dataset.q,+o.dataset.o);return}const h=e.target.closest('[data-h]');if(h&&!done[h.dataset.h])$('qf'+h.dataset.h).innerHTML=`<span class="hint">Hint: ${QS[h.dataset.h][3]}</span>`};
+$('q_shuffle').onclick=()=>{shuf(order);oo=QS.map(q=>shuf(q[1].map((_,k)=>k)));renderQuiz()};
+$('q_reset').onclick=()=>{done={};wrong={};fts=0;order=QS.map((_,i)=>i);oo=QS.map(q=>shuf(q[1].map((_,k)=>k)));renderQuiz()};
+R.quiz=()=>{};
+
+/* ---------- full screen, collapse, responsive redraw ---------- */
+function exitFs(el){el.classList.remove('infs');document.documentElement.classList.remove('nofs');const fe=document.fullscreenElement||document.webkitFullscreenElement;if(fe){const ex=document.exitFullscreen||document.webkitExitFullscreen;try{const p=ex.call(document);if(p&&p.catch)p.catch(()=>{})}catch(_){}}syncFs()}
+function syncFs(){document.querySelectorAll('[data-fs]').forEach(b=>{b.textContent=$(b.dataset.fs).classList.contains('infs')?'exit full screen':'full screen'})}
+function fsToggle(id){const el=$(id);if(el.classList.contains('infs')){exitFs(el);return}el.classList.add('infs');document.documentElement.classList.add('nofs');const rq=el.requestFullscreen||el.webkitRequestFullscreen;if(rq){try{const p=rq.call(el);if(p&&p.catch)p.catch(()=>{})}catch(_){}}syncFs();rzQ()}
+document.addEventListener('click',e=>{const f=e.target.closest('[data-fs]');if(f){fsToggle(f.dataset.fs);return}const c=e.target.closest('.ctog');if(c){c.closest('.lab').classList.toggle('min');rzQ()}});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.querySelectorAll('.lab.infs').forEach(l=>{l.classList.remove('infs');document.documentElement.classList.remove('nofs')});syncFs();rzQ()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.lab.infs').forEach(exitFs)});
+let rzT=0;function rzQ(){cancelAnimationFrame(rzT);rzT=requestAnimationFrame(()=>{const t=curTab();if(R[t])R[t]()})}
+if(window.ResizeObserver){const ro=new ResizeObserver(rzQ);document.querySelectorAll('.stage,.plotc').forEach(e=>ro.observe(e))}
+window.addEventListener('resize',rzQ);window.addEventListener('orientationchange',()=>setTimeout(rzQ,200));
+/* ---------- init ---------- */
+document.querySelectorAll('input[type=range]').forEach(out);
+buildPaper();
+$('rTitle').innerHTML=tiles('electricity');slap($('rTitle'));
+document.querySelectorAll('.sp').forEach((sv,i)=>sv.querySelectorAll('path').forEach((q,j)=>drawOn(q,300+i*220+j*120,420)));
+document.querySelectorAll('.sp').forEach((sv,i)=>A(sv,[{transform:'scale(1) rotate(0deg)'},{transform:'scale(1.18) rotate(8deg)'}],{duration:1300,direction:'alternate',iterations:40,easing:'steps(2,end)',delay:1200+i*300}));
+$('cap').insertAdjacentHTML('beforeend',ULS);$('cap').querySelectorAll('path').forEach((q,i)=>drawOn(q,900+i*260,420));
+renderQuiz();
+const h=location.hash.slice(1);
+show(TABS.some(t=>t[0]===h)?h:'home',true);
+$('nav').querySelectorAll('button').forEach((b,i)=>{b.style.setProperty('--r',((rnd()-.5)*4).toFixed(1)+'deg');pop(b,200+i*55,8,420);idle(b,1.2)});
+[...document.querySelectorAll('.card')].filter(c=>!c.querySelector('canvas')&&!c.classList.contains('wide')).forEach(c=>c.style.setProperty('--r',((rnd()-.5)*1.2).toFixed(2)+'deg'));
+A($('tail'),[{transform:'rotate(-7deg)'},{transform:'rotate(11deg)'}],{duration:850,direction:'alternate',iterations:200,easing:'ease-in-out'});
+setTimeout(()=>heroShow('hi!',waveArm),1100);
+</script>
+</body>
+</html>
