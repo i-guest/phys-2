@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f3ecdf">
 <meta name="mobile-web-app-capable" content="yes">
-<title>Electricity wallahi Study Lab</title>
+<title>Electricity wallahi web</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Abril+Fatface&family=Bowlby+One&family=Special+Elite&family=Bungee&family=Titan+One&family=Ultra&family=Lilita+One&family=Bebas+Neue&family=Playfair+Display:wght@900&family=Rubik+Mono+One&family=Caveat+Brush&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
@@ -91,7 +91,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;heigh
 input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--mustard);border:3px solid var(--ink);box-shadow:0 3px 2px rgba(74,48,22,.3)}
 input[type=radio]{accent-color:var(--red)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
-.row label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.row label{display:inline-flex;gap:6px;align-items:center;cursor:pointer;max-width:100%;flex-wrap:wrap}
+select{max-width:100%;min-width:0;text-overflow:ellipsis}
+.card,.ctrls,.cin{min-width:0}
+#p_table,#n_out{overflow-x:auto}
 .read{background:var(--cream);border:2px dashed #8a7a64;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:19px}
 .read b{color:var(--red);font-weight:400}
 .read div{margin:2px 0}
@@ -132,7 +135,7 @@ th{color:var(--muted);font-weight:400}
 .opt:disabled:not(.good):not(.nope){opacity:.55;cursor:default}
 .score{font-family:var(--brush);font-size:34px}
 
-#hero{position:fixed;right:16px;bottom:0;width:120px;z-index:30;pointer-events:none;transform:translateY(50%)}
+#hero{--peek:50%;position:fixed;right:16px;bottom:0;width:120px;z-index:30;pointer-events:none;transform:translateY(var(--peek))}
 #hero svg{width:100%;height:auto;display:block;overflow:visible;transform-origin:50% 100%;filter:drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(0 9px 7px rgba(74,48,22,.3))}
 #hop{transform-origin:50% 100%}
 #hero .dd path{stroke-dasharray:1;stroke-dashoffset:1}
@@ -202,8 +205,15 @@ html.nofs,html.nofs body{overflow:hidden}
   .ctrls{border-width:6px}
   .ctl{grid-template-columns:92px 1fr 74px;gap:6px;font-size:17px}
   .ctl output{font-size:16px}
-  #hero,#doodles{display:none}
+  #doodles{display:none}
+  #hero{width:84px;right:8px;--peek:56%;bottom:env(safe-area-inset-bottom,0px)}
+  #say{font-size:18px}
+  .lab{left:0;width:auto;margin:10px -12px 40px}
   .lead{font-size:18px}
+  .panel{overflow-x:clip}
+  #p_table,#n_out{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{font-size:16px}th,td{padding:4px 5px}
+  #p_table td:nth-child(2),#p_table th:nth-child(2){display:none}
   svg.ul{width:60%}
 }
 </style>
@@ -253,7 +263,7 @@ html.nofs,html.nofs body{overflow:hidden}
 <header>
   <div class="torn tw" id="tornW"></div><div class="torn tc" id="tornC"></div>
   <div class="in">
-    <h1 aria-label="Electricity: Interactive Study Lab"><span id="rTitle"></span><span class="cap" id="cap">wallahi Study Lab</span></h1>
+    <h1 aria-label="Electricity: Interactive Study Lab"><span id="rTitle"></span><span class="cap" id="cap">Interactive Study Lab</span></h1>
     <div class="stag">phy2 notes to ms.hed</div>
     <button id="themeBtn" title="Swap the paper backdrop">Backdrop: cream</button>
   </div>
@@ -475,8 +485,9 @@ function waveArm(){arm('armR',-150);let k=0;const t=setInterval(()=>{arm('armR',
 function cheerPose(){arm('armL',150);arm('armR',-150);$('mS').style.display='none';$('mO').style.display='';A($('hop'),[{transform:'scale(1,1)'},{transform:'scale(1.1,.86)'},{transform:'translateY(-22px) scale(.94,1.1)'},{transform:'scale(1.06,.94)'},{transform:'none'}],{duration:600,iterations:2,easing:SNAP});setTimeout(()=>{arm('armL',8);arm('armR',-8);$('mO').style.display='none';$('mS').style.display=''},1300)}
 function shiverPose(){let k=0;const b=$('hBody'),t=setInterval(()=>{b.style.transform=`translate(${((rnd()-.5)*7).toFixed(1)}px,${((rnd()-.5)*4).toFixed(1)}px) rotate(${((rnd()-.5)*5).toFixed(1)}deg)`;b.style.transformOrigin='80px 190px';if(++k>9){clearInterval(t);b.style.transform=''}},110)}
 function doodle(ids){ids.forEach((id,i)=>{const p=$(id);p.style.strokeDashoffset=0;drawOn(p,i*160,320);setTimeout(()=>{p.style.strokeDashoffset=1},1900)})}
-function heroShow(txt,pose,dd){clearTimeout(hT);const h=$('hero'),s=$('say');s.textContent=txt;A(h,[{transform:'translateY(50%)'},{transform:'translateY(0)'}],{duration:480,easing:POP,fill:'forwards'});A(s,[{transform:'scale(0) rotate(-12deg)',opacity:0},{opacity:1,offset:.2},{transform:'scale(1) rotate(0deg)',opacity:1}],{duration:420,delay:200,easing:POP,fill:'both'});if(pose)pose();if(dd)doodle(dd);
-  hT=setTimeout(()=>{A(s,[{opacity:1},{opacity:0}],{duration:200,fill:'forwards'});A(h,[{transform:'translateY(0)'},{transform:'translateY(50%)'}],{duration:320,easing:'cubic-bezier(.6,-.4,.9,.5)',fill:'forwards'})},2600)}
+const PK=()=>getComputedStyle($('hero')).getPropertyValue('--peek').trim()||'50%';
+function heroShow(txt,pose,dd){clearTimeout(hT);const h=$('hero'),s=$('say');s.textContent=txt;A(h,[{transform:`translateY(${PK()})`},{transform:'translateY(0)'}],{duration:480,easing:POP,fill:'forwards'});A(s,[{transform:'scale(0) rotate(-12deg)',opacity:0},{opacity:1,offset:.2},{transform:'scale(1) rotate(0deg)',opacity:1}],{duration:420,delay:200,easing:POP,fill:'both'});if(pose)pose();if(dd)doodle(dd);
+  hT=setTimeout(()=>{A(s,[{opacity:1},{opacity:0}],{duration:200,fill:'forwards'});A(h,[{transform:'translateY(0)'},{transform:`translateY(${PK()})`}],{duration:320,easing:'cubic-bezier(.6,-.4,.9,.5)',fill:'forwards'})},2600)}
 let blinks=0;const blinkT=setInterval(()=>{A($('eyes'),[{transform:'scaleY(1)'},{transform:'scaleY(.1)'},{transform:'scaleY(1)'}],{duration:170,easing:'steps(3,end)'});if(++blinks>70)clearInterval(blinkT)},3100);
 /* backdrops, torn paper, stars, hills */
 const BD=['cream','kraft','sky','night'];let bdi=0;
