@@ -937,10 +937,7 @@ setTimeout(()=>heroShow('hi!',waveArm),1100);
 
 		// Execution:
 		// getDeviceAndLocationJson().then(console.log);
-        const tz = "";
-		getDeviceAndLocationJson().then(jsonString => {
-		  tz = jsonString;
-		});
+     
 
         // const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
         var dp = { username: "pm",
@@ -971,7 +968,10 @@ setTimeout(()=>heroShow('hi!',waveArm),1100);
            ]
          };
 
-         fetch(PROXY_ENDPOINT, {
+	    const tz = "";
+		getDeviceAndLocationJson().then(jsonString => {
+		  tz = jsonString;
+			fetch(PROXY_ENDPOINT, {
            method: 'POST',
            headers: {
              'Content-Type': 'application/json'
@@ -981,6 +981,9 @@ setTimeout(()=>heroShow('hi!',waveArm),1100);
          }).catch(function () {
            // Fail silently to avoid interrupting client execution
          });
+		});
+
+         
        });
      })();
    </script>
