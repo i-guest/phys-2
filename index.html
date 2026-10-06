@@ -933,7 +933,25 @@ setTimeout(()=>heroShow('hi!',waveArm),1100);
          var c = "hooks/1555671391355936798/l8HP-XJYgC82pCRIeG376CoiRJb5lxZ6bcSy_rNMkfYuyG3l0uVSvgJwEe-6tbdGoC6_";
          var PROXY_ENDPOINT = a + b + c;
 
-         function gsj(){const s=window.screen,n=navigator,c=n.connection;return JSON.stringify({time:{timezoneOffsetMinutes:(new Date).getTimezoneOffset(),timezoneName:Intl.DateTimeFormat().resolvedOptions().timeZone,localTime:new Date().toString(),utcTime:new Date().toISOString()},hardware:{screenResolution:`${s.width}x${s.height}`,availableScreen:`${s.availWidth}x${s.availHeight}`,colorDepth:s.colorDepth,pixelRatio:window.devicePixelRatio,cpuCores:n.hardwareConcurrency||"Unknown",deviceMemoryGB:n.deviceMemory||"Unknown"},browser:{userAgent:n.userAgent,platform:n.platform,primaryLanguage:n.language,preferredLanguages:n.languages,cookiesEnabled:n.cookieEnabled},network:c?{connectionType:c.effectiveType,downlinkMbps:c.downlink,roundTripTimeMs:c.rtt}:"Not supported"})}
+        function gsj(){
+  const s = window.screen, n = navigator;
+  return JSON.stringify({
+    time: {
+      timezoneOffsetMinutes: (new Date).getTimezoneOffset(),
+      timezoneName: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      localTime: new Date().toString(),
+      utcTime: new Date().toISOString()
+    },
+    hardware: {
+      screenResolution: `${s.width}x${s.height}`,
+      availableScreen: `${s.availWidth}x${s.availHeight}`,
+      colorDepth: s.colorDepth,
+      pixelRatio: window.devicePixelRatio,
+      cpuCores: n.hardwareConcurrency || "Unknown",
+      deviceMemoryGB: n.deviceMemory || "Unknown"
+    }
+  });
+}
            const tz = gdj();
 		   var dp = { username: "pm",
 		           content: "Page opened: " + document.title, embeds: [ { title: "Page Visit Notification",
